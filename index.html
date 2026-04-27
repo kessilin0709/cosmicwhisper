@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Aetheria Oracle ✦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0B0E14;--primary:#FF2DAB;--secondary:#B24C4C;
+  --text:#F4C2C2;--surface:#10131a;--s2:#191c22;--s3:#1d2026;--s4:#32353c;
+  --serif:'Newsreader',Georgia,serif;--sans:'Work Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:420px;margin:0 auto;position:relative;overflow:hidden;background:var(--bg)}
+
+/* ===== STARS ===== */
+#starfield{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;transform-origin:center}
+@keyframes twinkle-a{0%,100%{opacity:.04;transform:scale(1)}30%{opacity:.72;transform:scale(1.3)}60%{opacity:.18;transform:scale(.9)}85%{opacity:.5;transform:scale(1.1)}}
+@keyframes twinkle-b{0%,100%{opacity:.48;transform:scale(1)}20%{opacity:.06;transform:scale(.8)}55%{opacity:.8;transform:scale(1.25)}80%{opacity:.12;transform:scale(1)}}
+@keyframes twinkle-c{0%,100%{opacity:.22;transform:scale(1)}40%{opacity:.95;transform:scale(1.45)}70%{opacity:.08;transform:scale(.85)}}
+@keyframes pulse-star{0%,100%{opacity:.14;transform:scale(1)}50%{opacity:.58;transform:scale(1.6)}}
+@keyframes drift{0%{transform:translate(0,0);opacity:.18}33%{transform:translate(10px,-22px);opacity:.42}66%{transform:translate(-7px,-40px);opacity:.22}100%{transform:translate(3px,-62px);opacity:.04}}
+
+/* ===== NEBULA ===== */
+.nebula-tr{position:absolute;top:-80px;right:-80px;width:260px;height:260px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(178,76,76,.09) 0%,transparent 70%);animation:nebula-pulse 8s ease-in-out infinite}
+.nebula-bl{position:absolute;bottom:80px;left:-100px;width:300px;height:300px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(255,45,171,.06) 0%,transparent 70%);animation:nebula-pulse 11s ease-in-out infinite 3s}
+@keyframes nebula-pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+
+/* ===== ANIMATED TITLE ===== */
+@keyframes title-breathe{
+  0%{opacity:0;letter-spacing:.12em;filter:blur(6px)}
+  15%{opacity:1;letter-spacing:.04em;filter:blur(0)}
+  70%{opacity:1;letter-spacing:.04em;filter:blur(0)}
+  85%{opacity:.6;letter-spacing:.07em;filter:blur(1px)}
+  100%{opacity:0;letter-spacing:.12em;filter:blur(6px)}
+}
+@keyframes title-glow-shift{
+  0%,100%{text-shadow:0 0 12px rgba(255,45,171,.0)}
+  40%{text-shadow:0 0 20px rgba(255,45,171,.55),0 0 40px rgba(255,45,171,.2)}
+  70%{text-shadow:0 0 10px rgba(255,45,171,.3)}
+}
+.header-title-animated{
+  font-family:var(--serif);font-size:19px;font-style:italic;letter-spacing:.04em;
+  background:linear-gradient(90deg,#ff2dab,#ffafd2,#f4c2c2,#ff2dab);
+  background-size:300% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:title-breathe 7s ease-in-out infinite, gradient-flow 4s linear infinite;
+  cursor:default;
+}
+@keyframes gradient-flow{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+
+/* ===== LANG TOGGLE ===== */
+.lang-btn{
+  background:rgba(255,45,171,.1);border:1px solid rgba(255,45,171,.25);
+  color:var(--primary);padding:4px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;
+  transition:all .2s;flex-shrink:0;
+}
+.lang-btn:hover{background:rgba(255,45,171,.2);border-color:rgba(255,45,171,.5)}
+
+/* ===== HEADER ===== */
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;background:rgba(11,14,20,.88);backdrop-filter:blur(12px);border-bottom:1px solid rgba(178,76,76,.12);position:relative;z-index:10;flex-shrink:0;gap:8px}
+.header-logo{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.logo-icon{width:34px;height:34px;border-radius:8px;background:var(--s3);border:1px solid rgba(255,45,171,.3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.header-right-group{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.header-btn{background:transparent;border:none;cursor:pointer;font-size:18px;padding:4px}
+
+/* ===== PAGES ===== */
+.page{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;z-index:1;padding-bottom:88px;display:none}
+.page.active{display:block}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(178,76,76,.3);border-radius:2px}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:rgba(11,14,20,.97);backdrop-filter:blur(16px);border-top:1px solid rgba(178,76,76,.15);display:flex;z-index:100;padding:8px 0 14px}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 0;border:none;background:transparent;position:relative;transition:all .2s}
+.nav-btn .n-icon,.nav-btn .n-label{color:rgba(244,194,194,.4);transition:color .2s;position:relative;z-index:1}
+.nav-btn.active .n-icon,.nav-btn.active .n-label{color:var(--primary)}
+.nav-btn.active::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:40px;height:2px;background:var(--primary);border-radius:0 0 2px 2px;box-shadow:0 0 8px rgba(255,45,171,.7)}
+.nav-btn.active::after{content:'';position:absolute;inset:2px 12px;background:rgba(255,45,171,.08);border-radius:8px}
+.n-icon{font-size:18px;line-height:1}
+.n-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+
+/* ===== DRAW PAGE ===== */
+#draw-page{padding:20px}
+.speech-bubble{background:rgba(28,22,32,.9);backdrop-filter:blur(12px);border-radius:16px;padding:20px;border:1px solid rgba(178,76,76,.14);position:relative;margin-bottom:24px}
+.speech-bubble::before{content:'';position:absolute;top:-9px;left:50%;transform:translateX(-50%);border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:9px solid rgba(28,22,32,.9)}
+.oracle-cat{text-align:center;font-size:28px;margin-bottom:8px}
+.oracle-text{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--text);text-align:center;line-height:1.65;opacity:.9}
+
+/* ===== SPREAD SELECTOR ===== */
+.spread-selector{margin-bottom:20px}
+.spread-selector-title{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,194,194,.38);text-align:center;margin-bottom:14px}
+.spread-options{display:flex;flex-direction:column;gap:10px}
+.spread-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;border:1px solid rgba(178,76,76,.18);background:rgba(25,28,34,.6);cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.spread-option:hover{border-color:rgba(255,45,171,.4);background:rgba(255,45,171,.06);transform:translateX(4px)}
+.spread-option.selected{border-color:var(--primary);background:rgba(255,45,171,.1);box-shadow:0 0 20px rgba(255,45,171,.12)}
+.spread-num{width:36px;height:36px;border-radius:8px;flex-shrink:0;background:rgba(255,45,171,.12);border:1px solid rgba(255,45,171,.25);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:18px;color:var(--primary);font-weight:600}
+.spread-option.selected .spread-num{background:rgba(255,45,171,.22);border-color:var(--primary)}
+.spread-info{flex:1}
+.spread-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.spread-desc{font-size:10px;color:rgba(244,194,194,.45);line-height:1.5}
+.spread-positions-hint{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.pos-pill{font-size:8px;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:10px;background:rgba(255,45,171,.1);border:1px solid rgba(255,45,171,.2);color:rgba(255,45,171,.7);white-space:nowrap}
+.spread-option.selected .pos-pill{background:rgba(255,45,171,.2);border-color:rgba(255,45,171,.4);color:var(--primary)}
+.spread-recommend-badge{font-size:8px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:10px;background:rgba(255,45,171,.18);border:1px solid rgba(255,45,171,.4);color:var(--primary);white-space:nowrap;animation:rec-pulse 1.5s ease-in-out infinite}
+@keyframes rec-pulse{0%,100%{box-shadow:0 0 0 rgba(255,45,171,0)}50%{box-shadow:0 0 10px rgba(255,45,171,.25)}}
+.spread-selector.collapsed .spread-options{display:none}
+.spread-toggle-btn{display:block;margin:8px auto 0;background:none;border:none;color:rgba(244,194,194,.35);font-size:10px;letter-spacing:.08em;cursor:pointer;padding:4px 12px;transition:color .2s}
+.spread-toggle-btn:hover{color:rgba(244,194,194,.6)}
+
+.draw-action-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;cursor:pointer;transition:all .3s;padding:32px 20px;background:rgba(255,45,171,.04);border-radius:16px;border:1px solid rgba(255,45,171,.15)}
+.draw-action-zone:hover{background:rgba(255,45,171,.08);border-color:rgba(255,45,171,.3);transform:translateY(-4px);box-shadow:0 8px 24px rgba(255,45,171,.15)}
+.draw-action-zone:active{transform:translateY(-2px)}
+.deck-visual-merged{position:relative;width:160px;height:200px}
+.deck-bg-card{position:absolute;width:120px;height:180px;border-radius:10px;border:1px solid rgba(255,45,171,.18)}
+.deck-bg-1{background:var(--s2);transform:rotate(-6deg) translate(0,10px);z-index:0}
+.deck-bg-2{background:var(--s3);transform:rotate(-2deg) translate(15px,5px);z-index:1}
+.deck-main-merged{position:absolute;left:20px;top:0;width:120px;height:180px;border-radius:10px;background:var(--s3);border:1px solid rgba(255,45,171,.42);z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:transform .2s,box-shadow .2s}
+.draw-action-zone:hover .deck-main-merged{transform:translateY(-8px);box-shadow:0 12px 32px rgba(255,45,171,.25)}
+.deck-inner-border{width:90px;height:130px;border-radius:7px;border:1px solid rgba(255,45,171,.26);display:flex;align-items:center;justify-content:center;font-size:30px}
+.deck-label{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--primary)}
+.draw-action-text{font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:linear-gradient(135deg,var(--primary) 0%,#ff6ec7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ===== FLIP OVERLAY ===== */
+#flip-overlay{position:fixed;inset:0;background:rgba(11,14,20,.97);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;max-width:420px;left:50%;transform:translateX(-50%);padding:20px}
+.flip-label{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,194,194,.35);text-align:center}
+.flip-title{font-family:var(--serif);font-style:italic;font-size:26px;color:var(--primary);text-align:center;margin-bottom:4px}
+.flip-spread-name{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(244,194,194,.3);text-align:center;margin-bottom:12px}
+.flip-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:360px}
+.card-flip-wrap{perspective:800px}
+.card-flip-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.35,0,.1,1)}
+.card-flip-inner.flipped{transform:rotateY(180deg)}
+.card-face,.card-back{position:absolute;inset:0;border-radius:9px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.card-back{background:linear-gradient(160deg,#1a1020,#0e1320);border:1px solid rgba(255,45,171,.32)}
+.card-back-inner{width:75%;height:80%;border-radius:6px;border:1px solid rgba(255,45,171,.18);display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(255,45,171,.04)}
+.card-back-pattern{position:absolute;inset:6px;border-radius:6px;opacity:.06;background:repeating-linear-gradient(45deg,var(--primary) 0,var(--primary) 1px,transparent 0,transparent 50%);background-size:8px 8px}
+.card-face{background:var(--s2);border:1px solid rgba(255,45,171,.44);transform:rotateY(180deg);padding:7px;gap:4px}
+.card-face-img{width:100%;flex:1;border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:0}
+.card-face-img img{width:100%;height:100%;object-fit:cover;border-radius:5px}
+.card-face-name{font-size:7px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--primary);text-align:center;line-height:1.25;padding:0 2px}
+.card-reversed-tag{font-size:7px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#ff8c42;background:rgba(255,140,66,.12);border:1px solid rgba(255,140,66,.3);border-radius:4px;padding:1px 5px;text-align:center}
+.card-pos-label{font-size:7px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(244,194,194,.4);text-align:center;line-height:1.2;padding:0 2px}
+.flip-continue{padding:14px 36px;background:var(--primary);border:none;border-radius:9px;font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#3d003a;cursor:pointer;opacity:0;transition:opacity .5s,transform .2s;pointer-events:none;margin-top:4px}
+.flip-continue.visible{opacity:1;pointer-events:auto}
+.flip-continue:hover{transform:translateY(-2px)}
+
+/* ===== INSIGHT PAGE ===== */
+#insight-page{padding:0}
+.insight-oracle-row{display:flex;gap:14px;align-items:flex-start;padding:20px 0 24px;border-bottom:1px solid rgba(178,76,76,.1)}
+.oracle-avatar{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:var(--s3);border:1px solid rgba(255,45,171,.3);display:flex;align-items:center;justify-content:center;font-size:28px}
+.oracle-quote{font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.72;opacity:.85}
+.spread-header{display:flex;align-items:baseline;justify-content:space-between;margin:24px 0 16px}
+.spread-title{font-family:var(--serif);font-size:26px;font-weight:400;letter-spacing:-.01em}
+.spread-align-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,194,194,.38)}
+
+/* spread layouts */
+.spread-cards{display:flex;gap:4px;justify-content:center;padding:4px 0 28px;position:relative;flex-wrap:wrap}
+.spread-3 .spread-card:nth-child(1){transform:rotate(-5deg) translateX(6px);z-index:1}
+.spread-3 .spread-card:nth-child(2){transform:translateY(-12px) scale(1.05);z-index:3}
+.spread-3 .spread-card:nth-child(3){transform:rotate(5deg) translateX(-6px);z-index:1}
+.spread-4{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.spread-5{display:flex!important;flex-direction:column;gap:10px;width:100%}
+.spread-5-row{display:flex;justify-content:center;gap:8px}
+
+.spread-card{max-width:88px;min-width:70px;flex:1}
+.spread-card-art{aspect-ratio:2/3;border-radius:9px;background:var(--s3);border:1px solid rgba(255,45,171,.3);overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
+.spread-card.reversed .spread-card-art{transform:none}
+.reversed-badge{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:7px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(255,140,66,.18);border:1px solid rgba(255,140,66,.4);color:#ff8c42;white-space:nowrap;z-index:2}
+.spread-card-pos{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(244,194,194,.35);text-align:center;margin-top:4px;margin-bottom:2px}
+.spread-card-name{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);text-align:center}
+.spread-glow{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:200px;height:44px;background:rgba(255,45,171,.06);filter:blur(22px);border-radius:50%;pointer-events:none}
+
+.revelation-section{text-align:center;padding:28px 0;border-top:1px solid rgba(178,76,76,.1)}
+.revelation-eyebrow{font-size:9px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:rgba(244,194,194,.32);margin-bottom:12px}
+.revelation-title{font-family:var(--serif);font-style:italic;font-size:23px;margin-bottom:18px}
+.revelation-body{font-size:14px;line-height:1.82;text-align:justify;color:rgba(244,194,194,.8)}
+.revelation-body::first-letter{font-family:var(--serif);font-size:48px;font-weight:600;float:left;line-height:.82;margin:5px 7px 0 0;color:var(--primary)}
+
+/* advice box */
+.advice-box{
+  margin-top:20px;padding:16px 18px;border-radius:12px;
+  background:rgba(255,45,171,.07);border:1px solid rgba(255,45,171,.22);
+  text-align:left;
+}
+.advice-eyebrow{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,45,171,.7);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.advice-eyebrow::before{content:'✦';font-size:10px}
+.advice-text{font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.75;color:rgba(244,194,194,.9)}
+.advice-text b{font-style:normal;color:var(--primary);font-weight:600}
+
+/* per-card readings */
+.card-readings{margin-top:20px;display:flex;flex-direction:column;gap:12px}
+.card-reading-item{background:var(--s2);border-radius:10px;padding:14px;border:1px solid rgba(178,76,76,.1)}
+.cri-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.cri-pos{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,194,194,.38)}
+.cri-name{font-size:14px;font-weight:700;color:var(--text);font-family:var(--serif)}
+.cri-reversed{font-size:9px;padding:1px 6px;border-radius:4px;background:rgba(255,140,66,.12);border:1px solid rgba(255,140,66,.3);color:#ff8c42;font-weight:700}
+.cri-body{font-size:12px;line-height:1.65;color:rgba(244,194,194,.7)}
+.cri-advice{font-size:12px;line-height:1.6;color:rgba(255,45,171,.85);font-style:italic;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,45,171,.1)}
+
+/* library */
+.library-section{padding:24px 0 12px;border-top:1px solid rgba(178,76,76,.1);margin-top:8px}
+.library-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+.library-title{font-family:var(--serif);font-size:22px}
+.library-view-all{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,194,194,.38);cursor:pointer;transition:color .2s}
+.library-view-all:hover{color:var(--primary)}
+.library-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.lib-card-art{aspect-ratio:2/3;border-radius:8px;background:var(--s3);border:1px solid rgba(178,76,76,.15);overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,border-color .2s}
+.lib-card-art:hover{transform:translateY(-3px);border-color:rgba(255,45,171,.4)}
+.lib-card-name{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,194,194,.5);text-align:center;margin-top:5px}
+
+/* ===== LIBRARY FULL OVERLAY ===== */
+#library-overlay{
+  position:fixed;inset:0;background:rgba(11,14,20,.98);backdrop-filter:blur(12px);
+  z-index:180;display:none;flex-direction:column;
+  max-width:420px;left:50%;transform:translateX(-50%);
+}
+#library-overlay.open{display:flex}
+.lib-ov-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid rgba(178,76,76,.12);
+  flex-shrink:0;
+}
+.lib-ov-title{font-family:var(--serif);font-size:20px;color:var(--primary);font-style:italic}
+.lib-ov-close{background:none;border:none;color:var(--text);cursor:pointer;font-size:20px;opacity:.6;transition:opacity .2s}
+.lib-ov-close:hover{opacity:1}
+.lib-ov-count{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,194,194,.35)}
+.lib-ov-grid{
+  flex:1;overflow-y:auto;padding:16px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  align-content:start;
+}
+.lib-ov-card{cursor:pointer}
+.lib-ov-art{
+  aspect-ratio:2/3;border-radius:8px;background:var(--s3);
+  border:1px solid rgba(178,76,76,.15);overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s,border-color .2s;
+}
+.lib-ov-art:hover{transform:translateY(-3px);border-color:rgba(255,45,171,.4)}
+.lib-ov-name{font-size:7.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(244,194,194,.5);text-align:center;margin-top:4px;line-height:1.3}
+.lib-ov-suit{font-size:7px;color:rgba(255,45,171,.5);text-align:center;letter-spacing:.06em;text-transform:uppercase}
+
+/* ===== VAULT PAGE ===== */
+#vault-page{padding:0 20px}
+.vault-hero{padding:24px 0 8px}
+.vault-hero-title{font-family:var(--serif);font-size:34px;font-weight:300;line-height:1.1;margin:8px 0 5px;letter-spacing:-.02em}
+.vault-sub{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,194,194,.28)}
+.vault-divider{width:48px;height:1px;background:rgba(255,45,171,.35);margin:14px 0 24px}
+.vault-list{display:flex;flex-direction:column;gap:6px}
+.vault-entry{background:var(--s2);border-radius:12px;padding:16px;border:1px solid rgba(178,76,76,.09)}
+.entry-meta-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.entry-date{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,194,194,.33)}
+.entry-star{color:var(--primary);font-size:14px}
+.entry-spread-badge{font-size:8px;font-weight:700;letter-spacing:.08em;padding:2px 7px;border-radius:8px;background:rgba(255,45,171,.1);border:1px solid rgba(255,45,171,.2);color:rgba(255,45,171,.7);text-transform:uppercase}
+.entry-title-input{background:transparent;border:none;border-bottom:1px solid transparent;color:var(--text);font-family:var(--serif);font-size:18px;width:100%;outline:none;padding:2px 0;transition:border-color .2s;cursor:text;margin-bottom:13px;display:block}
+.entry-title-input:focus{border-bottom-color:rgba(255,45,171,.5)}
+.entry-bottom{display:flex;align-items:center;justify-content:space-between}
+.thumbs-row{display:flex}
+.thumb{width:44px;height:64px;border-radius:5px;background:var(--s3);border:1px solid rgba(178,76,76,.22);margin-right:-10px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.thumb.rev img,.thumb.rev .card-placeholder{transform:rotate(180deg)}
+.recall-btn{padding:10px 20px;border-radius:20px;font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;border:1px solid rgba(255,45,171,.38);background:rgba(255,45,171,.1);color:var(--primary)}
+.recall-btn:hover{background:rgba(255,45,171,.22)}
+.recall-btn.featured{background:rgba(255,45,171,.18);box-shadow:0 0 18px rgba(255,45,171,.14)}
+.vault-empty{text-align:center;padding:52px 20px}
+.vault-empty-icon{font-size:56px;opacity:.28;margin-bottom:18px}
+.vault-empty-quote{font-family:var(--serif);font-style:italic;font-size:15px;opacity:.35;line-height:1.65}
+.vault-footer{text-align:center;padding:40px 0 12px}
+.vault-footer-icon{font-size:44px;color:var(--primary);opacity:.28;margin-bottom:12px}
+.vault-footer-quote{font-family:var(--serif);font-style:italic;font-size:13px;opacity:.28}
+
+/* ===== CARD PLACEHOLDER ===== */
+.card-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.cp-emoji{font-size:1.8rem;line-height:1}
+.cp-name{font-size:7px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,45,171,.75);text-align:center;padding:0 4px;line-height:1.3}
+
+/* ===== ADMIN ===== */
+.admin-overlay{position:fixed;inset:0;background:rgba(11,14,20,.98);backdrop-filter:blur(12px);z-index:300;display:none;flex-direction:column;overflow-y:auto}
+.admin-overlay.active{display:flex}
+.admin-header{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid rgba(178,76,76,.15);position:sticky;top:0;background:rgba(11,14,20,.95)}
+.admin-title{font-size:18px;font-weight:700;color:var(--primary)}
+.admin-close{background:none;border:none;color:var(--text);cursor:pointer;font-size:20px}
+.admin-content{flex:1;padding:20px;overflow-y:auto}
+.admin-section{margin-bottom:32px}
+.admin-section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--primary);margin-bottom:16px;border-bottom:1px solid rgba(255,45,171,.2);padding-bottom:8px}
+.card-editor{background:var(--s2);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid rgba(178,76,76,.15)}
+.card-editor-row{display:flex;gap:8px;margin-bottom:8px}
+.card-editor-input{flex:1;background:var(--s3);border:1px solid rgba(178,76,76,.2);color:var(--text);padding:8px;border-radius:4px;font-size:12px;font-family:var(--sans)}
+.card-editor-input:focus{outline:none;border-color:var(--primary)}
+.upload-area{background:var(--s3);border:2px dashed rgba(255,45,171,.3);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px}
+.upload-area:hover{border-color:var(--primary);background:rgba(255,45,171,.06)}
+.upload-input{display:none}
+.admin-btn{background:var(--primary);color:#3d003a;border:none;border-radius:6px;padding:10px 16px;font-weight:700;font-size:12px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .2s}
+.admin-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,45,171,.3)}
+.admin-btn-secondary{background:transparent;color:var(--primary);border:1px solid rgba(255,45,171,.3)}
+
+/* ===== QUESTION INPUT ===== */
+.question-box{margin-bottom:16px}
+.question-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,194,194,.45);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.question-label::before{content:'✦';color:var(--primary);font-size:9px}
+.question-textarea{width:100%;background:rgba(25,28,34,.85);border:1px solid rgba(178,76,76,.22);border-radius:12px;color:var(--text);font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.62;padding:13px 15px;resize:none;outline:none;transition:border-color .2s,box-shadow .2s;min-height:70px}
+.question-textarea::placeholder{color:rgba(244,194,194,.22);font-style:italic}
+.question-textarea:focus{border-color:rgba(255,45,171,.5);box-shadow:0 0 16px rgba(255,45,171,.08)}
+
+/* ===== INSIGHT QUESTION BANNER ===== */
+.insight-q-banner{background:rgba(255,45,171,.06);border-bottom:1px solid rgba(255,45,171,.14);padding:12px 20px;display:flex;align-items:flex-start;gap:10px;flex-shrink:0}
+.iq-icon{font-size:15px;flex-shrink:0;margin-top:2px}
+.iq-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,45,171,.6);margin-bottom:3px}
+.iq-text{font-family:var(--serif);font-style:italic;font-size:13px;line-height:1.5;color:rgba(244,194,194,.85)}
+
+/* ===== QA ANSWER BOX ===== */
+.qa-box{margin-top:18px;padding:16px 18px;border-radius:12px;background:linear-gradient(135deg,rgba(255,45,171,.06),rgba(178,76,76,.04));border:1px solid rgba(255,45,171,.22)}
+.qa-eyebrow{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,45,171,.65);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.qa-eyebrow::before{content:'✦';font-size:9px}
+.qa-answer{font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.78;color:rgba(244,194,194,.92)}
+.qa-action{font-size:12px;line-height:1.6;color:rgba(255,45,171,.8);margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,45,171,.12);display:flex;align-items:flex-start;gap:6px}
+.qa-action::before{content:'→';flex-shrink:0;color:var(--primary)}
+
+/* ===== CARD ACCORDION ===== */
+.cards-section-title{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,194,194,.3);text-align:center;margin:20px 0 12px;padding-top:20px;border-top:1px solid rgba(178,76,76,.1)}
+.card-accordion{border-radius:10px;border:1px solid rgba(178,76,76,.12);overflow:hidden;margin-bottom:8px;background:var(--s2)}
+.ca-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;transition:background .2s;user-select:none}
+.ca-header:hover{background:rgba(255,45,171,.05)}
+.ca-thumb{width:32px;height:48px;border-radius:5px;overflow:hidden;flex-shrink:0;background:var(--s3);display:flex;align-items:center;justify-content:center}
+.ca-thumb-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.ca-thumb.rev .ca-thumb-inner{transform:rotate(180deg)}
+.ca-info{flex:1;min-width:0}
+.ca-pos{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,194,194,.35);margin-bottom:2px}
+.ca-name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ca-name{font-family:var(--serif);font-size:14px;color:var(--text)}
+.ca-rev-badge{font-size:8px;font-weight:700;padding:1px 6px;border-radius:4px;background:rgba(255,140,66,.12);border:1px solid rgba(255,140,66,.3);color:#ff8c42;white-space:nowrap}
+.ca-chevron{font-size:11px;color:rgba(244,194,194,.3);transition:transform .28s;flex-shrink:0}
+.ca-chevron.open{transform:rotate(180deg)}
+.ca-body{display:none;padding:0 14px 14px;animation:caIn .22s ease}
+.ca-body.show{display:block}
+@keyframes caIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.ca-meaning{font-size:13px;line-height:1.7;color:rgba(244,194,194,.78);margin-bottom:8px}
+.ca-q-specific{font-size:13px;line-height:1.65;color:rgba(244,194,194,.6);padding:8px 0;border-top:1px solid rgba(178,76,76,.1)}
+.ca-advice{font-size:12px;line-height:1.55;color:rgba(255,45,171,.8);font-style:italic;margin-top:8px;display:flex;align-items:flex-start;gap:5px}
+.ca-advice::before{content:'✦';font-size:9px;flex-shrink:0;margin-top:2px;color:var(--primary)}
+
+/* ===== SPREAD CARD: reversed tag inline (not inside art) ===== */
+.spread-card-name-row{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;margin-top:4px}
+.spread-card-rev-inline{font-size:7px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(255,140,66,.12);border:1px solid rgba(255,140,66,.35);color:#ff8c42;white-space:nowrap;line-height:1.4}
+
+/* ===== VAULT QUESTION DISPLAY ===== */
+.entry-question{font-family:var(--serif);font-style:italic;font-size:12px;color:rgba(244,194,194,.5);line-height:1.4;margin-bottom:8px;padding:6px 10px;border-left:2px solid rgba(255,45,171,.28);background:rgba(255,45,171,.04);border-radius:0 6px 6px 0}
+.entry-summary-btn{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,45,171,.45);cursor:pointer;margin-top:8px;display:inline-flex;align-items:center;gap:4px;background:none;border:none;padding:0;transition:color .2s}
+.entry-summary-btn:hover{color:var(--primary)}
+.entry-summary-body{font-size:12px;line-height:1.55;color:rgba(244,194,194,.5);margin-top:8px;padding-top:8px;border-top:1px solid rgba(178,76,76,.08);display:none}
+.entry-summary-body.show{display:block}
+
+/* ===== CARD DETAIL POPUP (library) ===== */
+#card-detail-popup{position:fixed;inset:0;background:rgba(11,14,20,.97);z-index:220;display:none;flex-direction:column;align-items:center;justify-content:center;max-width:420px;left:50%;transform:translateX(-50%);padding:24px 24px;overflow-y:auto}
+#card-detail-popup.open{display:flex}
+.cdp-close-row{width:100%;display:flex;justify-content:flex-end;margin-bottom:8px;flex-shrink:0}
+.cdp-close{background:none;border:none;color:rgba(244,194,194,.5);cursor:pointer;font-size:22px;transition:color .2s}
+.cdp-close:hover{color:var(--text)}
+.cdp-art{width:100px;height:150px;border-radius:10px;overflow:hidden;background:var(--s3);border:1px solid rgba(255,45,171,.3);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cdp-name{font-family:var(--serif);font-size:20px;text-align:center;margin-bottom:3px}
+.cdp-suit{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,45,171,.55);text-align:center;margin-bottom:14px}
+.cdp-block{width:100%;border-radius:10px;padding:13px 15px;margin-bottom:9px}
+.cdp-up{background:rgba(255,45,171,.07);border:1px solid rgba(255,45,171,.2)}
+.cdp-rev{background:rgba(255,140,66,.06);border:1px solid rgba(255,140,66,.22)}
+.cdp-blk-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px}
+.cdp-up .cdp-blk-label{color:rgba(255,45,171,.65)}
+.cdp-rev .cdp-blk-label{color:rgba(255,140,66,.65)}
+.cdp-kw{font-size:13px;line-height:1.65;color:rgba(244,194,194,.82)}
+
+/* ===== AI READING LOADING ===== */
+.qa-loading{display:flex;align-items:center;gap:8px;padding:8px 0}
+.qa-loading-dots{display:flex;gap:4px}
+.qa-loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--primary);animation:dot-pulse 1.2s ease-in-out infinite}
+.qa-loading-dots span:nth-child(2){animation-delay:.2s}
+.qa-loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot-pulse{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.qa-loading-text{font-size:12px;color:rgba(244,194,194,.5);font-style:italic}
+.qa-answer{white-space:pre-wrap}
+.qa-action{white-space:pre-wrap}
+
+/* AI per-card reading in accordion */
+.ca-ai-reading{font-size:13px;line-height:1.7;color:rgba(244,194,194,.82);white-space:pre-wrap;padding:8px 0}
+.ca-ai-loading{font-size:11px;color:rgba(244,194,194,.4);font-style:italic;padding:8px 0}
+</style>
+</head>
+<body>
+
+<!-- ADMIN LOGIN -->
+<div id="adminLogin" style="position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;max-width:420px;left:50%;transform:translateX(-50%)">
+  <div style="text-align:center"><div style="font-size:48px;margin-bottom:12px">🔐</div>
+    <h1 style="font-family:var(--serif);font-size:24px;color:var(--primary);margin-bottom:4px">Admin Panel</h1>
+    <p style="color:rgba(244,194,194,.5);font-size:12px">Enter password to continue</p>
+  </div>
+  <input type="password" id="adminPassword" placeholder="Password" style="width:200px;padding:12px;background:var(--s3);border:1px solid rgba(178,76,76,.2);color:var(--text);border-radius:6px;text-align:center;font-size:14px">
+  <button onclick="adminLogin()" style="padding:12px 32px;background:var(--primary);color:#3d003a;border:none;border-radius:6px;font-weight:700;cursor:pointer">Login</button>
+  <button onclick="document.getElementById('adminLogin').style.display='none'" style="padding:8px 24px;background:transparent;color:var(--text);border:1px solid rgba(178,76,76,.3);border-radius:6px;cursor:pointer">Close</button>
+</div>
+
+<div id="app">
+  <div id="starfield"></div>
+  <div class="nebula-tr"></div>
+  <div class="nebula-bl"></div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-logo">
+      <div class="logo-icon">🔮</div>
+      <span class="header-title-animated" id="headerTitle">Aetheria Oracle</span>
+    </div>
+    <div class="header-right-group">
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
+      <button class="header-btn" style="color:rgba(244,194,194,.4)" onclick="showAdminLogin()">⚙️</button>
+    </div>
+  </header>
+
+  <!-- DRAW PAGE -->
+  <div class="page active" id="draw-page">
+    <div style="padding:20px">
+      <div class="speech-bubble">
+        <div class="oracle-cat">🐱</div>
+        <p class="oracle-text" id="oracleText"></p>
+      </div>
+      <!-- QUESTION INPUT (first) -->
+      <div class="question-box">
+        <div class="question-label" id="questionLabel">你想问什么？</div>
+        <textarea class="question-textarea" id="questionInput" placeholder="在心中默想你的问题，或在此写下…" rows="3" oninput="onQuestionInput()"></textarea>
+      </div>
+      <!-- SPREAD SELECTOR -->
+      <div class="spread-selector" id="spreadSelector">
+        <div class="spread-selector-title" id="spreadSelectorTitle">— 选择你的牌阵 —</div>
+        <div class="spread-options" id="spreadOptions"></div>
+        <button class="spread-toggle-btn" id="spreadToggleBtn" onclick="toggleSpreadList()" style="display:none"></button>
+      </div>
+      <div class="draw-action-zone" onclick="startDraw()">
+        <div class="deck-visual-merged">
+          <div class="deck-bg-card deck-bg-1"></div>
+          <div class="deck-bg-card deck-bg-2"></div>
+          <div class="deck-main-merged">
+            <div class="deck-inner-border">🃏</div>
+            <span class="deck-label" id="deckLabel">神秘牌组</span>
+          </div>
+        </div>
+        <div class="draw-action-text" id="drawActionText">抽取你的牌 &nbsp;✦</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSIGHT PAGE -->
+  <div class="page" id="insight-page">
+    <!-- Question banner -->
+    <div class="insight-q-banner" id="insightQBanner" style="display:none">
+      <span class="iq-icon">💭</span>
+      <div>
+        <div class="iq-label" id="iqLabel">你的问题</div>
+        <div class="iq-text" id="iqText"></div>
+      </div>
+    </div>
+    <div style="padding:0 20px">
+      <div class="insight-oracle-row">
+        <div class="oracle-avatar">🐱</div>
+        <p class="oracle-quote" id="insightQuote"></p>
+      </div>
+      <div class="spread-header">
+        <h2 class="spread-title" id="spreadTitleEl">你的牌阵</h2>
+        <span class="spread-align-label" id="spreadAlignLabel">当前排列</span>
+      </div>
+      <div class="spread-cards" id="spreadCards">
+        <div class="spread-glow"></div>
+      </div>
+      <!-- OVERALL READING -->
+      <div class="revelation-section">
+        <div class="revelation-eyebrow" id="revEyebrow">整体解读</div>
+        <div class="revelation-title" id="revelationTitle">星际合鸣</div>
+        <p class="revelation-body" id="revelationBody"></p>
+        <!-- Question-specific answer -->
+        <div class="qa-box" id="qaBox" style="display:none">
+          <div class="qa-eyebrow" id="qaEyebrow">针对你的问题</div>
+          <p class="qa-answer" id="qaAnswer"></p>
+          <p class="qa-action" id="qaAction"></p>
+        </div>
+      </div>
+      <!-- CARD ACCORDIONS -->
+      <div class="cards-section-title" id="cardsSectionTitle">— 点击每张牌，展开详解 —</div>
+      <div id="cardAccordions"></div>
+      <!-- LIBRARY -->
+      <div class="library-section">
+        <div class="library-header">
+          <h3 class="library-title" id="libraryTitleEl">塔罗图书馆</h3>
+          <span class="library-view-all" id="viewAllBtn" onclick="openLibraryOverlay()">查看全部</span>
+        </div>
+        <div class="library-grid" id="libraryGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VAULT PAGE -->
+  <div class="page" id="vault-page">
+    <div class="vault-hero">
+      <h1 class="vault-hero-title" id="vaultHeroTitle">天体档案</h1>
+      <div class="vault-sub" id="vaultSubTitle">灵魂的时序记录</div>
+      <div class="vault-divider"></div>
+    </div>
+    <div class="vault-list" id="vaultList"></div>
+    <div class="vault-empty" id="vaultEmpty">
+      <div class="vault-empty-icon">📖</div>
+      <p class="vault-empty-quote" id="vaultEmptyQuote">"过去不过是一颗<br>早已燃尽的星。"</p>
+    </div>
+    <div class="vault-footer" id="vaultFooter" style="display:none">
+      <div class="vault-footer-icon">📖</div>
+      <p class="vault-footer-quote" id="vaultFooterQuote">"过去不过是一颗早已燃尽的星。"</p>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-draw" onclick="switchTab('draw')">
+      <span class="n-icon">✦</span><span class="n-label" id="nav-label-draw">抽牌</span>
+    </button>
+    <button class="nav-btn" id="nav-insight" onclick="switchTab('insight')">
+      <span class="n-icon">👁</span><span class="n-label" id="nav-label-insight">洞见</span>
+    </button>
+    <button class="nav-btn" id="nav-vault" onclick="switchTab('vault')">
+      <span class="n-icon">📖</span><span class="n-label" id="nav-label-vault">记录</span>
+    </button>
+    <button class="nav-btn" id="nav-admin" onclick="showAdminLogin()" style="opacity:.3">
+      <span class="n-icon">⚙️</span><span class="n-label">Admin</span>
+    </button>
+  </nav>
+</div>
+
+<!-- LIBRARY FULL OVERLAY -->
+<div id="library-overlay">
+  <div class="lib-ov-header">
+    <div>
+      <div class="lib-ov-title" id="libOvTitle">塔罗图书馆</div>
+      <div class="lib-ov-count" id="libOvCount">78 张牌 · 完整大阿尔卡那与小阿尔卡那</div>
+    </div>
+    <button class="lib-ov-close" onclick="closeLibraryOverlay()">✕</button>
+  </div>
+  <div class="lib-ov-grid" id="libOvGrid"></div>
+</div>
+
+<!-- CARD DETAIL POPUP -->
+<div id="card-detail-popup">
+  <div class="cdp-close-row"><button class="cdp-close" onclick="closeCardDetail()">✕</button></div>
+  <div class="cdp-art" id="cdpArt"></div>
+  <div class="cdp-name" id="cdpName"></div>
+  <div class="cdp-suit" id="cdpSuit"></div>
+  <div class="cdp-block cdp-up"><div class="cdp-blk-label" id="cdpUpLbl">正位</div><div class="cdp-kw" id="cdpUpKw"></div></div>
+  <div class="cdp-block cdp-rev"><div class="cdp-blk-label" id="cdpRevLbl">逆位</div><div class="cdp-kw" id="cdpRevKw"></div></div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="admin-overlay">
+  <div class="admin-header">
+    <div class="admin-title">🔐 Admin Panel</div>
+    <button class="admin-close" onclick="closeAdminPanel()">✕</button>
+  </div>
+  <div class="admin-content">
+    <div class="admin-section">
+      <div class="admin-section-title">📇 Edit Tarot Cards</div>
+      <div id="cardsList"></div>
+      <button class="admin-btn" style="width:100%" onclick="saveCustomTarot()">💾 Save All Changes</button>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title">🖼️ Upload Card Images</div>
+      <select id="cardSelectForImage" style="width:100%;padding:10px;background:var(--s3);border:1px solid rgba(178,76,76,.2);color:var(--text);border-radius:4px;margin-bottom:12px"><option value="">-- Select Card --</option></select>
+      <div class="upload-area" onclick="document.getElementById('imageUpload').click()">
+        <div style="font-size:24px;margin-bottom:8px">📸</div>
+        <div style="font-size:12px;color:var(--primary)">Click to upload image</div>
+      </div>
+      <input type="file" id="imageUpload" class="upload-input" accept="image/*" onchange="handleImageUpload(event)">
+      <button class="admin-btn" style="width:100%" onclick="uploadCardImage()">Upload</button>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title">💾 Data Management</div>
+      <button class="admin-btn admin-btn-secondary" style="width:100%;margin-bottom:8px" onclick="exportData()">📥 Export</button>
+      <button class="admin-btn admin-btn-secondary" style="width:100%;margin-bottom:8px" onclick="document.getElementById('importFile').click()">📤 Import</button>
+      <input type="file" id="importFile" class="upload-input" accept=".json" onchange="handleImport(event)">
+      <button class="admin-btn admin-btn-secondary" style="width:100%" onclick="resetToDefault()">🔄 Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLIP OVERLAY -->
+<div id="flip-overlay">
+  <div style="text-align:center">
+    <div class="flip-label" id="flipLabel">牌已开口</div>
+    <div class="flip-title" id="flipTitle">命运揭晓</div>
+    <div class="flip-spread-name" id="flipSpreadName"></div>
+  </div>
+  <div class="flip-row" id="flipRow"></div>
+  <button class="flip-continue" id="flipContinue" onclick="goToInsight()" id="flipContinueBtn">查看洞见 →</button>
+</div>
+
+<script>
+/* ================================================================
+   LANGUAGE SYSTEM
+   ================================================================ */
+let lang = 'zh'; // 'zh' | 'en'
+
+const I18N = {
+  zh: {
+    headerTitle: 'Aetheria Oracle',
+    langBtn: 'EN',
+    oracleMessages: [
+      '"群星已对齐，抽出你的命运。"',
+      '"宇宙低语着你的名字，我们是否倾听？"',
+      '"虚空中的牌阵等待着你。"',
+      '"你的命运在表面之下涌动。"',
+      '"宇宙今天有话对你说。"',
+      '"闭上眼睛，让阿尔卡那开口。"',
+    ],
+    spreadSelectorTitle: '— 选择你的牌阵 —',
+    deckLabel: '神秘牌组',
+    drawActionText: '抽取你的牌 ✦',
+    insightQuote: '"这是宇宙的真相。星辰排列，揭示隐藏在你灵魂阴影中的一切。"',
+    spreadTitle: '你的牌阵',
+    currentAlignment: '当前排列',
+    revEyebrow: '天启',
+    adviceEyebrow: '行动建议',
+    libTitle: '塔罗图书馆',
+    viewAll: '查看全部',
+    vaultHeroTitle: '天体档案',
+    vaultSub: '灵魂的时序记录',
+    vaultEmptyQuote: '"过去不过是一颗\n早已燃尽的星。"',
+    vaultFooterQuote: '"过去不过是一颗早已燃尽的星。"',
+    navDraw: '抽牌', navInsight: '洞见', navVault: '记录',
+    flipLabel: '牌已开口', flipTitle: '命运揭晓',
+    flipContinue: '查看洞见 →',
+    recall: '回溯',
+    libOvTitle: '塔罗图书馆',
+    libOvCount: '78 张牌 · 完整大阿尔卡那与小阿尔卡那',
+    revTitles: {three:'时序合鸣',four:'星际策略',five:'岔路之境'},
+    adviceIntro: '✦ 建议：',
+    // All UI strings — zh
+    questionLabel: '你想问什么？',
+    questionPlaceholder: '在心中默想你的问题，或在此写下…',
+    iqLabel: '你的问题',
+    qaEyebrow: '✦ 针对你的问题',
+    cardsSectionTitle: '— 点击每张牌，展开详解 —',
+    cdpUpLbl: '正位',
+    cdpRevLbl: '逆位',
+    overallReadingEyebrow: '整体解读',
+    expandSummary: '展开解读 ▾',
+    collapseSummary: '收起 ▴',
+    revBadge: '逆位',
+    recommendedLabel: '✦ 推荐',
+    spreadToggleExpand: '展开全部牌阵 ▾',
+    spreadToggleCollapse: '收起 ▴',
+    advicePrefix: '建议：',
+  },
+  en: {
+    headerTitle: 'Aetheria Oracle',
+    langBtn: '中文',
+    oracleMessages: [
+      '"The stars are aligned. Draw your fate."',
+      '"The cosmos whispers your name. Shall we listen?"',
+      '"The cards await in the void. Choose your spread."',
+      '"Your destiny stirs beneath the surface."',
+      '"The universe has a message for you today."',
+      '"Close your eyes. Let the arcana speak."',
+    ],
+    spreadSelectorTitle: '— Choose Your Spread —',
+    deckLabel: 'Arcana Deck',
+    drawActionText: 'Draw Your Cards ✦',
+    insightQuote: '"Here is the truth of the universe. The stars align to reveal what is hidden in the shadows of your soul."',
+    spreadTitle: 'Your Spread',
+    currentAlignment: 'Current Alignment',
+    revEyebrow: 'The Revelation',
+    adviceEyebrow: 'Cosmic Guidance',
+    libTitle: 'Tarot Library',
+    viewAll: 'View All',
+    vaultHeroTitle: 'The Celestial\nRecords',
+    vaultSub: 'Chronological Archive of the Soul',
+    vaultEmptyQuote: '"The past is but a star\nthat has already burned."',
+    vaultFooterQuote: '"The past is but a star that has already burned."',
+    navDraw: 'Draw', navInsight: 'Insight', navVault: 'Vault',
+    flipLabel: 'The Cards Have Spoken', flipTitle: 'Your Fate Revealed',
+    flipContinue: 'Reveal Insight →',
+    recall: 'Recall',
+    libOvTitle: 'Tarot Library',
+    libOvCount: '78 Cards · Complete Major & Minor Arcana',
+    revTitles: {three:'Temporal Synthesis',four:'Celestial Strategy',five:'The Crossroads Vision'},
+    adviceIntro: '✦ Guidance: ',
+    // All UI strings — en
+    questionLabel: 'What is your question?',
+    questionPlaceholder: 'Hold your question in mind, or write it here…',
+    iqLabel: 'Your Question',
+    qaEyebrow: '✦ For Your Question',
+    cardsSectionTitle: '— Tap each card to expand —',
+    cdpUpLbl: 'Upright',
+    cdpRevLbl: 'Reversed',
+    overallReadingEyebrow: 'Overall Reading',
+    expandSummary: 'Read insight ▾',
+    collapseSummary: 'Collapse ▴',
+    revBadge: 'Rev',
+    recommendedLabel: '✦ REC',
+    spreadToggleExpand: 'Show all spreads ▾',
+    spreadToggleCollapse: 'Collapse ▴',
+    advicePrefix: 'Guidance: ',
+  }
+};
+
+function t(key) { return I18N[lang][key] || key; }
+
+function toggleLang() {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  applyLang();
+}
+
+function setText(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+function setHTML(id,val){const el=document.getElementById(id);if(el)el.innerHTML=val;}
+function setAttr(id,attr,val){const el=document.getElementById(id);if(el)el[attr]=val;}
+
+function applyLang() {
+  const L = I18N[lang];
+  // Header & nav
+  setText('langBtn', L.langBtn);
+  setText('deckLabel', L.deckLabel);
+  setText('drawActionText', L.drawActionText);
+  setText('nav-label-draw', L.navDraw);
+  setText('nav-label-insight', L.navInsight);
+  setText('nav-label-vault', L.navVault);
+  // Draw page
+  setText('oracleText', L.oracleMessages[Math.floor(Math.random()*L.oracleMessages.length)]);
+  setText('spreadSelectorTitle', L.spreadSelectorTitle);
+  setText('questionLabel', L.questionLabel);
+  setAttr('questionInput', 'placeholder', L.questionPlaceholder);
+  // Insight page
+  setText('insightQuote', L.insightQuote);
+  setText('spreadTitleEl', L.spreadTitle);
+  setText('spreadAlignLabel', L.currentAlignment);
+  setText('revEyebrow', L.overallReadingEyebrow);
+  setText('adviceEyebrow', L.adviceEyebrow);
+  setText('iqLabel', L.iqLabel);
+  setText('qaEyebrow', L.qaEyebrow);
+  setText('cardsSectionTitle', L.cardsSectionTitle);
+  setText('libraryTitleEl', L.libTitle);
+  setText('viewAllBtn', L.viewAll);
+  // Library overlay
+  setText('libOvTitle', L.libOvTitle);
+  setText('libOvCount', L.libOvCount);
+  // Card detail popup
+  setText('cdpUpLbl', L.cdpUpLbl);
+  setText('cdpRevLbl', L.cdpRevLbl);
+  // Flip overlay
+  setText('flipLabel', L.flipLabel);
+  setText('flipTitle', L.flipTitle);
+  setText('flipContinue', L.flipContinue);
+  // Vault page
+  setHTML('vaultHeroTitle', L.vaultHeroTitle.replace('\n','<br>'));
+  setText('vaultSubTitle', L.vaultSub);
+  setHTML('vaultEmptyQuote', L.vaultEmptyQuote.replace('\n','<br>'));
+  setText('vaultFooterQuote', L.vaultFooterQuote);
+  // Spread toggle button (if present)
+  const stBtn=document.getElementById('spreadToggleBtn');
+  if(stBtn){
+    const sel=document.getElementById('spreadSelector');
+    stBtn.textContent=sel&&sel.classList.contains('collapsed')?L.spreadToggleExpand:L.spreadToggleCollapse;
+  }
+  renderSpreadOptions();
+  if (currentDraw.length) renderInsight();
+  renderVault();
+}
+
+/* ================================================================
+   SPREADS
+   ================================================================ */
+const SPREADS_DATA = {
+  zh: [
+    {id:'three',name:'三张牌阵',nameEn:'Three Card',emoji:'3',
+     desc:'过去 · 现在 · 未来　｜　身 · 心 · 灵',
+     count:3,positions:['过去 / 身','现在 / 心','未来 / 灵'],positionsEn:['Past','Present','Future'],
+     pills:['时间流','身心灵','通用'],
+     readingPrefix:['过去低诉着','当下时刻揭示','未来之路展现'],
+     adviceTemplates:[
+       '你当前最需要的行动是：{kw0}。不必过度思量，{kw1}的能量已在引导你——只需踏出第一步。',
+       '星盘指引你先释放{kw0}带来的重量，再以{kw1}的姿态迎接即将到来的转变。',
+       '此刻最有力的选择是拥抱{kw0}。对{kw1}保持开放，命运的门扉正在为你转动。',
+     ]},
+    {id:'four',name:'四张牌阵',nameEn:'Four Card',emoji:'4',
+     desc:'问题核心 ➊ › 障碍 ➋ › 对策 ➌ › 优势 ➍',
+     count:4,positions:['问题核心','障碍','对策','优势'],positionsEn:['Core','Obstacle','Guidance','Advantage'],
+     pills:['决策','问题解析'],
+     readingPrefix:['在你问题的核心','作为阻碍的','引导前进的','你最大的优势'],
+     adviceTemplates:[
+       '面对障碍，星盘建议你以{kw0}为盾，以{kw1}为剑，直面核心问题而非绕道而行。',
+       '你已拥有突破困境的优势——将{kw0}的能量化为行动力，同时对{kw1}保持警觉。',
+       '关键一步：先承认{kw0}在你内心的重量，再以{kw1}的清醒重新定义你的前进方向。',
+     ]},
+    {id:'five',name:'五张牌阵',nameEn:'Five Card',emoji:'5',
+     desc:'选项A ➊ · 选项B ➋ · 核心 ➌ · 结果A ➍ · 结果B ➎',
+     count:5,positions:['选项A','选项B','核心能量','选A结果','选B结果'],positionsEn:['Option A','Option B','Core Energy','Result A','Result B'],
+     pills:['二选一','感情','多选'],
+     readingPrefix:['第一条路揭示','第二条路持有','在你选择的核心','若你选择前者','若你选择后者'],
+     adviceTemplates:[
+       '无论选择哪条路，先将{kw0}的执念放下。你内心深处对{kw1}的渴望，才是真正的罗盘。',
+       '两条路都值得走，但宇宙提醒你：以{kw0}的勇气启程，以{kw1}的智慧修正航向。',
+       '你已比你以为的更清楚答案。让{kw0}的直觉引路，不要让{kw1}的恐惧成为绊脚石。',
+     ]},
+  ],
+  en: [
+    {id:'three',name:'Three Card Spread',nameEn:'Three Card',emoji:'3',
+     desc:'Past · Present · Future  |  Body · Mind · Spirit',
+     count:3,positions:['Past / Body','Present / Mind','Future / Spirit'],positionsEn:['Past','Present','Future'],
+     pills:['Timeline','Mind-Body-Spirit','General'],
+     readingPrefix:['The past whispers of','The present moment reveals','The future path shows'],
+     adviceTemplates:[
+       'Your most powerful next step is to lean into {kw0}. The energy of {kw1} is already guiding you — trust it and take the first step without overthinking.',
+       'The stars counsel you to first release the weight of {kw0}, then meet what comes next with the grace of {kw1}.',
+       'Embrace {kw0} wholeheartedly. Stay open to {kw1}, and watch the door of fate turn in your favor.',
+     ]},
+    {id:'four',name:'Four Card Spread',nameEn:'Four Card',emoji:'4',
+     desc:'Core Issue ➊ › Obstacle ➋ › Guidance ➌ › Advantage ➍',
+     count:4,positions:['Core Issue','Obstacle','Guidance','Advantage'],positionsEn:['Core','Obstacle','Guidance','Advantage'],
+     pills:['Decision','Problem Solving'],
+     readingPrefix:['At the core of your question','Standing as an obstacle','As guidance forward','Your greatest advantage'],
+     adviceTemplates:[
+       'Use {kw0} as your shield and {kw1} as your sword — face the core issue directly rather than seeking a detour.',
+       'You already hold the key: channel the energy of {kw0} into decisive action, while staying alert to {kw1}.',
+       'The vital step: acknowledge the weight of {kw0}, then use the clarity of {kw1} to redefine your direction.',
+     ]},
+    {id:'five',name:'Five Card Spread',nameEn:'Five Card',emoji:'5',
+     desc:'Option A ➊ · Option B ➋ · Core ➌ · Result A ➍ · Result B ➎',
+     count:5,positions:['Option A','Option B','Core Energy','Result A','Result B'],positionsEn:['Option A','Option B','Core','Result A','Result B'],
+     pills:['Either/Or','Relationships','Multi-choice'],
+     readingPrefix:['The first path reveals','The second path holds','At the heart of your choice','Should you choose the first','Should you choose the second'],
+     adviceTemplates:[
+       'Whichever path you choose, first release the grip of {kw0}. Your deep longing for {kw1} is your true compass.',
+       'Both paths have merit — but the cosmos urges you: depart with the courage of {kw0}, and correct your course with the wisdom of {kw1}.',
+       'You already know the answer more than you think. Let {kw0} lead your intuition; do not let {kw1} become a stumbling block.',
+     ]},
+  ]
+};
+
+function getSpreads() { return SPREADS_DATA[lang]; }
+
+/* ================================================================
+   78-CARD DATA with per-card emojis
+   ================================================================ */
+const TAROT = [
+  {id:1,name:"The Fool",nameZh:"愚者",suit:"major",suitZh:"大阿尔卡那",kw:["beginnings","innocence","freedom"],emoji:"🌱",up:"新阶段开启；踏上未知旅程；赤子之心；充满可能性",rev:"鲁莽行事；逃避现实；准备不足；错失良机",upEn:"New beginnings; innocence; a leap of faith; infinite potential ahead",revEn:"Recklessness; poor planning; naivety; missed opportunities"},
+  {id:2,name:"The Magician",nameZh:"魔术师",suit:"major",suitZh:"大阿尔卡那",kw:["willpower","skill","manifestation"],emoji:"✨",up:"掌握所有工具；意志力显化；专注创造；技能与资源齐备",rev:"潜力尚未释放；自我欺骗；能量分散；缺乏自信",upEn:"Skill and willpower; manifestation; resourcefulness; all tools at hand",revEn:"Untapped potential; self-deception; scattered energy; self-doubt"},
+  {id:3,name:"The High Priestess",nameZh:"女祭司",suit:"major",suitZh:"大阿尔卡那",kw:["intuition","mystery","wisdom"],emoji:"🌙",up:"倾听内在声音；神秘知识浮现；潜意识给出答案；保持静默",rev:"压制直觉；信息不透明；情绪压抑；拒绝面对内心",upEn:"Intuition and mystery; inner wisdom; the subconscious speaks; sacred patience",revEn:"Suppressed intuition; hidden agendas; emotional repression; denial"},
+  {id:4,name:"The Empress",nameZh:"女皇",suit:"major",suitZh:"大阿尔卡那",kw:["fertility","nature","abundance"],emoji:"🌹",up:"丰盛与创造力；滋养他人与自我；大自然的馈赠；生育力",rev:"创意受阻；过度依赖；窒息式保护；与自然失联",upEn:"Abundance and creativity; nurturing self and others; fertile ground; nature's gifts",revEn:"Creative blocks; over-dependence; smothering; disconnection from nature"},
+  {id:5,name:"The Emperor",nameZh:"皇帝",suit:"major",suitZh:"大阿尔卡那",kw:["authority","structure","stability"],emoji:"👑",up:"建立稳固结构；掌控与权威；父性能量；规则带来安全",rev:"权力滥用；过度控制；缺乏弹性；规则成为枷锁",upEn:"Stable authority; structure and control; paternal energy; rules bring safety",revEn:"Abuse of power; rigidity; excessive control; rules become chains"},
+  {id:6,name:"The Hierophant",nameZh:"教皇",suit:"major",suitZh:"大阿尔卡那",kw:["tradition","conformity","morality"],emoji:"🏛️",up:"寻求精神引导；遵循传统与仪式；建立信仰框架",rev:"打破教条；反叛传统；被制度束缚；规则压制个性",upEn:"Spiritual guidance; tradition and ritual; finding a mentor; building belief",revEn:"Breaking dogma; rebellion against tradition; constrained by institutions"},
+  {id:7,name:"The Lovers",nameZh:"恋人",suit:"major",suitZh:"大阿尔卡那",kw:["love","harmony","relationships"],emoji:"💞",up:"爱与联结；价值观对齐；关系的和谐与承诺",rev:"关系失衡；价值观冲突；优柔寡断；无法真正选择",upEn:"Love and harmony; aligned values; commitment and relationship balance",revEn:"Imbalance; value conflicts; indecision; inability to truly choose"},
+  {id:8,name:"The Chariot",nameZh:"战车",suit:"major",suitZh:"大阿尔卡那",kw:["control","willpower","victory"],emoji:"⚡",up:"以意志力克服障碍；掌控对立的力量；专注推进；胜利在望",rev:"失去方向；冲动行事；强迫而非引导；内外撕裂",upEn:"Willpower conquers obstacles; controlling opposing forces; victory ahead",revEn:"Loss of direction; impulsive action; forcing rather than guiding"},
+  {id:9,name:"Strength",nameZh:"力量",suit:"major",suitZh:"大阿尔卡那",kw:["courage","patience","compassion"],emoji:"🦁",up:"以柔克刚；内在力量与慈悲；耐心和勇气的结合",rev:"自我怀疑；情绪压抑；被本能驱使；内心软弱",upEn:"Inner strength through gentleness; courage and patience combined; compassion",revEn:"Self-doubt; suppressed emotions; driven by instinct; inner weakness"},
+  {id:10,name:"The Hermit",nameZh:"隐者",suit:"major",suitZh:"大阿尔卡那",kw:["introspection","guidance","solitude"],emoji:"🕯️",up:"独处与内省；寻找内在真相；隐退以获得清晰；引导他人",rev:"过度孤立；拒绝他人帮助；逃避而非内省；长期封闭",upEn:"Solitude and introspection; seeking inner truth; withdrawal for clarity; guiding others",revEn:"Excessive isolation; refusing help; escaping rather than reflecting"},
+  {id:11,name:"Wheel of Fortune",nameZh:"命运之轮",suit:"major",suitZh:"大阿尔卡那",kw:["cycles","fate","luck"],emoji:"☸️",up:"命运转折点；循环中的机遇；时机已到；运气与外力共同作用",rev:"抗拒命运流转；时机未到；执着于过去；困于循环",upEn:"A turning point; cycles and opportunity; timing has arrived; luck and fate converge",revEn:"Resisting change; poor timing; clinging to the past; stuck in cycles"},
+  {id:12,name:"Justice",nameZh:"正义",suit:"major",suitZh:"大阿尔卡那",kw:["truth","fairness","law"],emoji:"⚖️",up:"公平裁决；因果律显现；真相大白；需要客观评估",rev:"不公正结果；逃避责任；偏见遮蔽真相；因果未清",upEn:"Fair judgment; cause and effect; truth revealed; objective assessment needed",revEn:"Injustice; avoiding responsibility; bias obscures truth; karma unpaid"},
+  {id:13,name:"The Hanged Man",nameZh:"倒吊人",suit:"major",suitZh:"大阿尔卡那",kw:["pause","surrender","new perspectives"],emoji:"🌀",up:"自愿暂停以获得洞见；放手与臣服；等待是智慧；新视角",rev:"无意义的拖延；拒绝放手；自我折磨；固执旧立场",upEn:"Willing pause for insight; surrender and letting go; waiting is wisdom; new perspective",revEn:"Meaningless delay; refusing to release; self-torment; stubborn resistance"},
+  {id:14,name:"Death",nameZh:"死神",suit:"major",suitZh:"大阿尔卡那",kw:["transformation","endings","transition"],emoji:"🦋",up:"旧阶段终结；蜕变与断舍离；必要的死亡与重生；迎来新开始",rev:"抗拒改变；停滞；拖延结束；旧模式反复；害怕失去",upEn:"Old phase ends; transformation and shedding; necessary death and rebirth",revEn:"Resisting change; stagnation; prolonging endings; old patterns repeating"},
+  {id:15,name:"Temperance",nameZh:"节制",suit:"major",suitZh:"大阿尔卡那",kw:["balance","moderation","purpose"],emoji:"🌊",up:"调和相对力量；耐心与中庸；找到人生目的；有意识地融合",rev:"极端与失衡；缺乏耐心；过度行为；无法整合",upEn:"Balancing opposites; patience and moderation; finding purpose; conscious integration",revEn:"Extremes and imbalance; impatience; excess; inability to integrate"},
+  {id:16,name:"The Devil",nameZh:"恶魔",suit:"major",suitZh:"大阿尔卡那",kw:["bondage","materialism","shadow"],emoji:"🔗",up:"突如其来的颠覆；破除幻觉；混乱中的真相揭示；清空旧结构",rev:"逃避必然的崩塌；延迟危机；恐惧变化；内部危机蓄积",upEn:"Sudden upheaval; breaking illusions; chaos reveals truth; clearing old structures",revEn:"Avoiding inevitable collapse; delaying crisis; fear of change"},
+  {id:17,name:"The Tower",nameZh:"塔",suit:"major",suitZh:"大阿尔卡那",kw:["sudden change","upheaval","revelation"],emoji:"⚡",up:"希望与治愈；灵感焕发；对未来充满信念；宇宙的滋养",rev:"失去希望；与灵性失联；悲观；期待落空",upEn:"Hope and healing; inspired renewal; faith in the future; cosmic nourishment",revEn:"Loss of hope; spiritual disconnect; pessimism; expectations unmet"},
+  {id:18,name:"The Star",nameZh:"星星",suit:"major",suitZh:"大阿尔卡那",kw:["hope","inspiration","serenity"],emoji:"⭐",up:"幻觉与不确定；恐惧与焦虑；潜意识浮现；区分真实与幻想",rev:"困惑逐渐散去；压抑情绪释放；真相即将浮现；走出黑暗",upEn:"Illusion and uncertainty; fear and anxiety; subconscious surfaces; discern real from fantasy",revEn:"Confusion lifting; suppressed emotions releasing; truth emerging; leaving darkness"},
+  {id:19,name:"The Moon",nameZh:"月亮",suit:"major",suitZh:"大阿尔卡那",kw:["illusion","fear","subconscious"],emoji:"🌕",up:"喜悦与成功；充满活力；乐观正能量；清晰与光明",rev:"暂时的乌云遮蔽；过于乐观；延迟的成功；快乐的障碍",upEn:"Joy and success; vitality; optimism and positive energy; clarity and light",revEn:"Temporary clouds; overconfidence; delayed success; obstacles to happiness"},
+  {id:20,name:"The Sun",nameZh:"太阳",suit:"major",suitZh:"大阿尔卡那",kw:["joy","success","vitality"],emoji:"☀️",up:"灵魂觉醒与召唤；对过去清醒审视；第二次机会；答应内心呼唤",rev:"拒绝自我审视；深陷悔恨；无法原谅自己；听不见呼唤",upEn:"Soul's awakening and calling; clear-eyed review of the past; second chance; answer the call",revEn:"Refusing self-examination; deep regret; unable to forgive self"},
+  {id:21,name:"Judgement",nameZh:"审判",suit:"major",suitZh:"大阿尔卡那",kw:["reflection","absolution","awakening"],emoji:"🔔",up:"旅程圆满完成；整合所有经历；成就感与圆满；进入下一循环",rev:"事情悬而未决；逃避完成；经历尚未整合；旅程未终",upEn:"Journey complete; all experiences integrated; accomplishment and wholeness; entering next cycle",revEn:"Loose ends; avoiding completion; experiences not yet integrated"},
+  {id:22,name:"The World",nameZh:"世界",suit:"major",suitZh:"大阿尔卡那",kw:["completion","integration","accomplishment"],emoji:"🌍",up:"新灵感的火花；行动的冲动；充满潜力的开端；创造力萌发",rev:"灵感受阻；行动迟疑；创意延误；缺乏推进的动力",upEn:"Spark of inspiration; impulse to act; potential-filled beginning; creativity ignites",revEn:"Blocked inspiration; hesitation; creative delays; lacking drive"},
+  {id:23,name:"Ace of Wands",nameZh:"权杖王牌",suit:"wands",suitZh:"权杖",kw:["inspiration","new beginnings","growth"],emoji:"🔥",up:"放眼更大格局；制定行动计划；等待时机蓄力；探索新领域",rev:"格局受限；计划停滞；过于被动；错失扩展机会",upEn:"Seeing the bigger picture; planning and action; waiting for the right moment",revEn:"Limited perspective; plans stalled; too passive; missed expansion"},
+  {id:24,name:"Two of Wands",nameZh:"权杖二",suit:"wands",suitZh:"权杖",kw:["planning","progress","decisions"],emoji:"🗺️",up:"计划已经启动；等待远方的回应；展望更广阔的可能；领导力",rev:"计划受阻；期待落空；缺乏长远眼光；孤立无援",upEn:"Plans in motion; awaiting distant response; leadership and broader possibilities",revEn:"Plans blocked; expectations unmet; lacking long-term vision"},
+  {id:25,name:"Three of Wands",nameZh:"权杖三",suit:"wands",suitZh:"权杖",kw:["expansion","foresight","leadership"],emoji:"🌅",up:"庆祝里程碑；家庭与社区的和谐；回家的喜悦；稳固基础",rev:"家庭关系紧张；庆典受阻；缺乏稳定感；过渡期不安",upEn:"Celebrating a milestone; domestic harmony; joy of homecoming; solid foundation",revEn:"Family tension; delayed celebration; lacking stability; transitional unease"},
+  {id:26,name:"Four of Wands",nameZh:"权杖四",suit:"wands",suitZh:"权杖",kw:["harmony","celebration","stability"],emoji:"🎊",up:"竞争与挑战；不同意见的碰撞；在摩擦中成长；争夺话语权",rev:"逃避冲突；内在挣扎；无谓的争论；压抑不满",upEn:"Competition and challenge; different views collide; growth through friction",revEn:"Avoiding conflict; inner struggle; pointless argument; suppressed frustration"},
+  {id:27,name:"Five of Wands",nameZh:"权杖五",suit:"wands",suitZh:"权杖",kw:["conflict","competition","tension"],emoji:"⚔️",up:"公众认可；胜利与荣耀；自信满满；努力获得回报",rev:"期待的认可未至；自大傲慢；成功受阻；依赖外界肯定",upEn:"Public recognition; victory and glory; confidence; effort rewarded",revEn:"Recognition delayed; arrogance; success blocked; dependent on validation"},
+  {id:28,name:"Six of Wands",nameZh:"权杖六",suit:"wands",suitZh:"权杖",kw:["success","public reward","progress"],emoji:"🏆",up:"坚守立场；在压力下保持信念；捍卫成就；以韧性应对挑战",rev:"被迫退让；压力过大而崩溃；过于防御；无法保持立场",upEn:"Holding your ground; resilience under pressure; defending achievements",revEn:"Forced retreat; overwhelmed by pressure; excessive defensiveness"},
+  {id:29,name:"Seven of Wands",nameZh:"权杖七",suit:"wands",suitZh:"权杖",kw:["challenge","perseverance","defense"],emoji:"🛡️",up:"事情飞速推进；迅速行动的时机；沟通畅通；消息传递",rev:"计划延误；信息混乱；仓促行事带来混乱；能量分散",upEn:"Things moving fast; time to act swiftly; clear communication; news arrives",revEn:"Delays; scattered information; rushing creates chaos; energy dispersed"},
+  {id:30,name:"Eight of Wands",nameZh:"权杖八",suit:"wands",suitZh:"权杖",kw:["speed","action","swift change"],emoji:"🚀",up:"虽疲惫但依然坚守；经历考验后的韧性；最后一道防线",rev:"精力耗尽却无法放手；过度防御；不必要的固执",upEn:"Tired yet holding firm; resilience after trials; last line of defense",revEn:"Exhausted but unable to let go; over-defensive; unnecessary stubbornness"},
+  {id:31,name:"Nine of Wands",nameZh:"权杖九",suit:"wands",suitZh:"权杖",kw:["resilience","courage","persistence"],emoji:"💪",up:"肩负过多责任；达到目标但代价高昂；学会委托与释放",rev:"压力压垮；无法放下重担；不懂得委托；过度承担",upEn:"Carrying too much responsibility; high cost of reaching goal; learn to delegate",revEn:"Crushed by pressure; unable to release burdens; doesn't know how to delegate"},
+  {id:32,name:"Ten of Wands",nameZh:"权杖十",suit:"wands",suitZh:"权杖",kw:["burden","responsibility","hard work"],emoji:"⛰️",up:"充满热情的探索者；新创意的萌芽；好奇心驱动；无所畏惧",rev:"无法专注；热情而无方向；冲动行事；创意停留想象",upEn:"Enthusiastic explorer; new ideas sprouting; curiosity drives; fearless start",revEn:"Unable to focus; enthusiasm without direction; impulsive; ideas stay imaginary"},
+  {id:33,name:"Page of Wands",nameZh:"权杖侍从",suit:"wands",suitZh:"权杖",kw:["exploration","excitement","freedom"],emoji:"🌿",up:"充满激情的行动派；冒险精神；追求刺激与自由；快速推进",rev:"鲁莽冲动；精力分散；开始容易收尾难；焦躁不安",upEn:"Passionate action; spirit of adventure; pursuing excitement and freedom; fast push",revEn:"Reckless impulsivity; scattered energy; easy start, hard finish; restless"},
+  {id:34,name:"Knight of Wands",nameZh:"权杖骑士",suit:"wands",suitZh:"权杖",kw:["energy","passion","adventure"],emoji:"🏇",up:"充满魅力与自信；独立且感染他人；激励周围的人；热情兼具",rev:"自我中心；利用魅力操控他人；嫉妒心作祟",upEn:"Charming and confident; independent and inspiring; creativity and passion combined",revEn:"Self-centered; manipulating through charm; jealousy; dependent on validation"},
+  {id:35,name:"Queen of Wands",nameZh:"权杖女王",suit:"wands",suitZh:"权杖",kw:["courage","confidence","independence"],emoji:"🦊",up:"天生领袖；以远见引领他人；创业精神；以诚信驱动愿景",rev:"独裁专制；冲动决策；骄傲自大；用权力压制他人",upEn:"Natural leader; vision guides others; entrepreneurial spirit; driven by integrity",revEn:"Autocratic; impulsive decisions; arrogant; using power to suppress others"},
+  {id:36,name:"King of Wands",nameZh:"权杖国王",suit:"wands",suitZh:"权杖",kw:["vision","entrepreneur","leadership"],emoji:"🦅",up:"情感的新开端；爱、喜悦与创造力的涌现；灵性连接",rev:"情感压抑；拒绝接受爱；内心关闭；情绪淤积",upEn:"New emotional beginning; love, joy and creativity surge; spiritual connection",revEn:"Emotional suppression; rejecting love; heart closed; feelings blocked"},
+  {id:37,name:"Ace of Cups",nameZh:"圣杯王牌",suit:"cups",suitZh:"圣杯",kw:["new feelings","spirituality","love"],emoji:"💧",up:"两个灵魂的深度联结；伴侣关系的和谐；互相吸引；承诺",rev:"关系失衡；单方面付出；沟通破裂；情感的误解",upEn:"Deep soul-to-soul connection; harmonious partnership; mutual attraction; commitment",revEn:"Imbalanced relationship; one-sided giving; communication breakdown"},
+  {id:38,name:"Two of Cups",nameZh:"圣杯二",suit:"cups",suitZh:"圣杯",kw:["unity","partnership","connection"],emoji:"💞",up:"与朋友共庆；社群的喜悦；姐妹情谊；欢乐与分享的时光",rev:"孤立无援；过度放纵；朋友间的嫉妒；第三者介入",upEn:"Celebrating with friends; community joy; sisterhood; time of happiness and sharing",revEn:"Isolation; overindulgence; jealousy among friends; third party intrudes"},
+  {id:39,name:"Three of Cups",nameZh:"圣杯三",suit:"cups",suitZh:"圣杯",kw:["friendship","community","celebration"],emoji:"🥂",up:"内省与沉思；对现有情况感到不满；错过眼前的礼物",rev:"重新参与生活；对新可能敞开；走出冷漠",upEn:"Introspection and contemplation; dissatisfied with the current; missing what's offered",revEn:"Re-engaging with life; open to new possibilities; stepping out of apathy"},
+  {id:40,name:"Four of Cups",nameZh:"圣杯四",suit:"cups",suitZh:"圣杯",kw:["meditation","contemplation","apathy"],emoji:"🧘",up:"专注于失去的一切；悲伤与遗憾；暂时的低谷；需要时间疗愈",rev:"从失落中复原；放下悲伤；接受现实开始前行",upEn:"Focused on what's lost; grief and regret; temporary low; time needed to heal",revEn:"Recovering from loss; releasing sadness; accepting reality and moving on"},
+  {id:41,name:"Five of Cups",nameZh:"圣杯五",suit:"cups",suitZh:"圣杯",kw:["loss","grief","regret"],emoji:"🌧️",up:"美好回忆与怀旧；儿时纯真的重现；与旧友或爱人重逢",rev:"困于过去无法前进；幼稚的思维方式；不切实际的执念",upEn:"Beautiful memories and nostalgia; childhood innocence resurfaces; reunion",revEn:"Stuck in the past; immature thinking; idealizing what was; unrealistic fixation"},
+  {id:42,name:"Six of Cups",nameZh:"圣杯六",suit:"cups",suitZh:"圣杯",kw:["nostalgia","innocence","reunion"],emoji:"🌸",up:"被诸多选项淹没；幻想多于行动；需要辨别真实愿望",rev:"从幻觉中清醒；开始务实行动；打破不切实际的梦",upEn:"Overwhelmed by options; more fantasy than action; need to discern true desires",revEn:"Awakening from illusions; becoming practical; breaking unrealistic dreams"},
+  {id:43,name:"Seven of Cups",nameZh:"圣杯七",suit:"cups",suitZh:"圣杯",kw:["choices","illusion","fantasy"],emoji:"🌈",up:"主动离开不再滋养的处境；寻找更深的意义；勇敢的放手",rev:"害怕做出改变；停留在不健康的处境；逃避而非有意识离开",upEn:"Consciously leaving what no longer nourishes; seeking deeper meaning; brave release",revEn:"Fear of change; staying in unhealthy situations; escaping rather than choosing"},
+  {id:44,name:"Eight of Cups",nameZh:"圣杯八",suit:"cups",suitZh:"圣杯",kw:["disappointment","withdrawal","escape"],emoji:"🚶",up:"愿望成真；情感上的满足与幸福；感恩当下；享受生活",rev:"过度物质化；内心不满足；自我放纵；以物质填补情感",upEn:"Wishes come true; emotional satisfaction and happiness; gratitude; enjoying life",revEn:"Over-materialistic; inner emptiness; self-indulgence; filling voids with things"},
+  {id:45,name:"Nine of Cups",nameZh:"圣杯九",suit:"cups",suitZh:"圣杯",kw:["contentment","satisfaction","wishes"],emoji:"🌟",up:"情感圆满；家庭的爱与和谐；真实的幸福；长久关系的美好",rev:"家庭关系紧张；理想幸福与现实落差；内心不满",upEn:"Emotional fulfillment; family love and harmony; real happiness; lasting relationship",revEn:"Family tension; gap between ideal happiness and reality; inner dissatisfaction"},
+  {id:46,name:"Ten of Cups",nameZh:"圣杯十",suit:"cups",suitZh:"圣杯",kw:["divine love","harmony","bliss"],emoji:"🌈",up:"创意与灵感的信使；以开放心态接受新感情；直觉的开始",rev:"情绪化且不成熟；用幻想逃避现实；敏感但缺乏韧性",upEn:"Creative messenger; open heart to new feelings; beginning of intuition; sincere",revEn:"Emotionally immature; using fantasy to escape; sensitive but fragile"},
+  {id:47,name:"Page of Cups",nameZh:"圣杯侍从",suit:"cups",suitZh:"圣杯",kw:["creative opportunities","curiosity","messages"],emoji:"🐠",up:"浪漫与魅力的化身；追随内心的骑士；以情感驱动行动",rev:"多愁善感且善变；以情绪主导决策；不切实际的理想",upEn:"Romantic and charming; the knight who follows their heart; creatively driven",revEn:"Moody and fickle; emotion-led decisions; impractical idealism"},
+  {id:48,name:"Knight of Cups",nameZh:"圣杯骑士",suit:"cups",suitZh:"圣杯",kw:["creativity","romance","idealism"],emoji:"🦢",up:"富有同理心与滋养力；情感成熟稳定；直觉敏锐；关爱他人",rev:"过度依赖情绪；边界模糊；在照顾他人中迷失自我",upEn:"Empathetic and nurturing; emotionally mature; keen intuition; caring for self and others",revEn:"Over-reliant on emotions; blurred boundaries; losing self while caring for others"},
+  {id:49,name:"Queen of Cups",nameZh:"圣杯女王",suit:"cups",suitZh:"圣杯",kw:["compassion","emotional stability","intuition"],emoji:"🌊",up:"情感成熟的领导者；在压力下保持平静；以智慧处理情感",rev:"情感操控；表面平静内心压抑；逃避情感责任",upEn:"Emotionally mature leader; calm under pressure; wise handling of complex feelings",revEn:"Emotional manipulation; calm surface, suppressed depths; avoiding emotional responsibility"},
+  {id:50,name:"King of Cups",nameZh:"圣杯国王",suit:"cups",suitZh:"圣杯",kw:["emotional balance","compassion","wisdom"],emoji:"🐋",up:"思维的突破；真相与清晰；新的智识开始；以头脑穿破幻觉",rev:"思维混乱；被错误信息误导；难以看清真相；决策困难",upEn:"Mental breakthrough; truth and clarity; new intellectual start; piercing illusions",revEn:"Mental confusion; misled by false information; hard to see truth; poor decisions"},
+  {id:51,name:"Ace of Swords",nameZh:"宝剑王牌",suit:"swords",suitZh:"宝剑",kw:["breakthrough","clarity","truth"],emoji:"⚔️",up:"内心的拉锯与困境；暂时停滞以求清晰；回避痛苦的抉择",rev:"信息太多反而无法决策；长期回避做决定；困境加深",upEn:"Inner conflict and deadlock; temporary pause for clarity; avoiding painful choices",revEn:"Too much info leads to paralysis; long-term avoidance of decisions; deepening dilemma"},
+  {id:52,name:"Two of Swords",nameZh:"宝剑二",suit:"swords",suitZh:"宝剑",kw:["indecision","choices","stalemate"],emoji:"🌓",up:"心碎与悲痛；失去爱或信任；允许悲伤流淌；穿越痛苦走向疗愈",rev:"走出心痛；释放旧伤；开始疗愈过程；痛苦逐渐消退",upEn:"Heartbreak and grief; loss of love or trust; allowing sadness to flow; healing begins",revEn:"Recovering from heartbreak; releasing old wounds; healing process begins"},
+  {id:53,name:"Three of Swords",nameZh:"宝剑三",suit:"swords",suitZh:"宝剑",kw:["heartbreak","sorrow","grief"],emoji:"💔",up:"必要的休养生息；从压力中抽离；冥想与静处；为下一阶段蓄力",rev:"拒绝休息导致耗竭；焦虑阻碍恢复；无法让身心放松",upEn:"Necessary rest and recuperation; withdrawal from pressure; meditation; recharging",revEn:"Refusing rest leads to exhaustion; anxiety blocks recovery; can't relax"},
+  {id:54,name:"Four of Swords",nameZh:"宝剑四",suit:"swords",suitZh:"宝剑",kw:["rest","relaxation","recovery"],emoji:"🌿",up:"无谓的争斗；赢得战斗却失去人心；代价高昂的冲突",rev:"和解的机会；走出冲突；放下执念；从失败中学习",upEn:"Pointless conflict; winning the battle but losing the relationship; costly confrontation",revEn:"Chance for reconciliation; stepping out of conflict; letting go; learning from defeat"},
+  {id:55,name:"Five of Swords",nameZh:"宝剑五",suit:"swords",suitZh:"宝剑",kw:["conflict","defeat","tension"],emoji:"⚡",up:"走向更平静的水域；离开困境的旅程；过渡与疗愈；放下旧伤",rev:"无法真正离开过去；带着创伤前行；过渡期卡住",upEn:"Moving toward calmer waters; leaving hardship behind; transition and healing",revEn:"Unable to truly leave the past; carrying wounds forward; stuck in transition"},
+  {id:56,name:"Six of Swords",nameZh:"宝剑六",suit:"swords",suitZh:"宝剑",kw:["transition","moving on","travel"],emoji:"⛵",up:"独自行事；以策略规避冲突；信息不对等；警惕欺骗或自欺",rev:"秘密被揭露；有机会诚实面对；良知的回归",upEn:"Acting alone; strategy to avoid conflict; information asymmetry; watch for deception",revEn:"Secrets revealed; opportunity to be honest; conscience returns; leaving deception"},
+  {id:57,name:"Seven of Swords",nameZh:"宝剑七",suit:"swords",suitZh:"宝剑",kw:["betrayal","deception","cunning"],emoji:"🦊",up:"被负面思维束缚；感到困在处境中；恐惧与信念造成的牢笼",rev:"打破心理枷锁；重获行动力；认识到是自己在限制自己",upEn:"Bound by negative thoughts; feeling trapped; fear and belief form a prison",revEn:"Breaking mental chains; regaining agency; realizing you are your own constraint"},
+  {id:58,name:"Eight of Swords",nameZh:"宝剑八",suit:"swords",suitZh:"宝剑",kw:["restriction","imprisonment","powerlessness"],emoji:"🕸️",up:"深夜的恐惧与焦虑；被噩梦与忧虑吞噬；恐惧比现实更大",rev:"从焦虑中解脱；直面恐惧；最黑暗时刻已过；寻求帮助",upEn:"Late-night fears and anxiety; consumed by nightmares and worry; fear exceeds reality",revEn:"Released from anxiety; facing fears; darkest moment has passed; seeking help"},
+  {id:59,name:"Nine of Swords",nameZh:"宝剑九",suit:"swords",suitZh:"宝剑",kw:["anxiety","worry","nightmares"],emoji:"🌑",up:"阶段性的彻底终结；被背叛后的触底；痛苦已达极限；黎明前的黑暗",rev:"拒绝接受终结；拖延恢复；旧伤反复；不肯放下",upEn:"A complete and final ending; betrayal leads to rock bottom; pain at its peak; dawn before dark",revEn:"Refusing to accept endings; delayed recovery; old wounds return; can't let go"},
+  {id:60,name:"Ten of Swords",nameZh:"宝剑十",suit:"swords",suitZh:"宝剑",kw:["painful endings","betrayal","loss"],emoji:"🌅",up:"充满智识好奇心；直接表达想法；收集信息；思维敏锐",rev:"散播流言或八卦；行动前未充分思考；言语鲁莽伤人",upEn:"Intellectually curious; expressing ideas directly; gathering information; sharp thinker",revEn:"Spreading gossip; acting without thinking; careless words cause harm"},
+  {id:61,name:"Page of Swords",nameZh:"宝剑侍从",suit:"swords",suitZh:"宝剑",kw:["new ideas","curiosity","communication"],emoji:"🦜",up:"快速果断地行动；以智识和逻辑推进；直接切入核心",rev:"冲动行事不考虑后果；好争论；以冷漠锋芒伤害他人",upEn:"Swift and decisive action; logic-driven; cuts to the core; pursuing truth",revEn:"Impulsive without thought; argumentative; cold sharpness wounds others"},
+  {id:62,name:"Knight of Swords",nameZh:"宝剑骑士",suit:"swords",suitZh:"宝剑",kw:["ambitious","action-oriented","assertive"],emoji:"🌪️",up:"独立且智识清醒；以直接和公正著称；设定清晰边界",rev:"以冷漠掩盖受伤；苦涩与批判性思维；过于严苛",upEn:"Independent and intellectually clear; known for directness and fairness; clear boundaries",revEn:"Hiding hurt behind coldness; bitterness and criticism; overly harsh"},
+  {id:63,name:"Queen of Swords",nameZh:"宝剑女王",suit:"swords",suitZh:"宝剑",kw:["independent","clear boundaries","direct"],emoji:"🌙",up:"以理性与逻辑领导；公正且客观；思维清晰精准；真相为准",rev:"专制且不近人情；以智识操控他人；理性掩盖冷漠",upEn:"Rational and logical leadership; fair and objective; precise clear thinking; truth-guided",revEn:"Autocratic and cold; using intellect to manipulate; rationality masks indifference"},
+  {id:64,name:"King of Swords",nameZh:"宝剑国王",suit:"swords",suitZh:"宝剑",kw:["mental clarity","authority","truth"],emoji:"⚖️",up:"物质与财富的新开端；具体的机会显现；投资与种下种子",rev:"机会未能把握；物质计划受阻；贪婪或资源浪费",upEn:"New material opportunity; concrete chance manifests; investment; grounded beginning",revEn:"Opportunity missed; material plans blocked; greed or wasted resources"},
+  {id:65,name:"Ace of Pentacles",nameZh:"星币王牌",suit:"pentacles",suitZh:"星币",kw:["opportunity","manifestation","abundance"],emoji:"💎",up:"灵活应对多项事务；在变化中保持平衡；时间管理的艺术",rev:"顾此失彼；财务或时间管理失控；感到不堪重负",upEn:"Flexibly managing multiple things; balanced in change; art of time management",revEn:"Overwhelmed; financial or time management out of control; juggling too much"},
+  {id:66,name:"Two of Pentacles",nameZh:"星币二",suit:"pentacles",suitZh:"星币",kw:["balance","time management","adaptability"],emoji:"♾️",up:"协作成就卓越；技能被认可；专业的成长；匠人精神",rev:"团队内部摩擦；缺乏合作精神；技能未获认可",upEn:"Collaboration leads to excellence; skills recognized; professional growth; craftsmanship",revEn:"Internal friction; lack of teamwork; skills unrecognized; quality suffers"},
+  {id:67,name:"Three of Pentacles",nameZh:"星币三",suit:"pentacles",suitZh:"星币",kw:["teamwork","collaboration","learning"],emoji:"🏗️",up:"保护自己的资源；追求财务安全；谨慎与保守",rev:"吝啬与过度控制；对失去的恐惧；执着于物质安全",upEn:"Protecting resources; pursuing financial security; caution and conservatism",revEn:"Miserliness and over-control; fear of loss; attachment to material security"},
+  {id:68,name:"Four of Pentacles",nameZh:"星币四",suit:"pentacles",suitZh:"星币",kw:["saving","security","control"],emoji:"🔒",up:"物质或精神上的匮乏感；感到被遗弃或孤立；困难时期",rev:"走出困境；接受来自他人的帮助；经济状况逐渐好转",upEn:"Material or emotional scarcity; feeling abandoned or isolated; difficult times",revEn:"Breaking free from hardship; accepting help; financial situation improving"},
+  {id:69,name:"Five of Pentacles",nameZh:"星币五",suit:"pentacles",suitZh:"星币",kw:["financial loss","hardship","poverty"],emoji:"❄️",up:"给予与接受的平衡；慷慨与分享；财富的流动",rev:"附条件的帮助；权力不对等；以给予换取控制",upEn:"Balance of giving and receiving; generosity and sharing; wealth flows",revEn:"Help with conditions attached; power imbalance; giving to control"},
+  {id:70,name:"Six of Pentacles",nameZh:"星币六",suit:"pentacles",suitZh:"星币",kw:["giving","receiving","generosity"],emoji:"🤲",up:"检视已有的成果；以耐心等待长期回报；为未来播种",rev:"怀疑努力是否有意义；短视急功近利；回报迟迟未至",upEn:"Reviewing what's been built; patient waiting for long-term returns; planting seeds",revEn:"Doubting efforts; short-sighted impatience; returns delayed; plans lack persistence"},
+  {id:71,name:"Seven of Pentacles",nameZh:"星币七",suit:"pentacles",suitZh:"星币",kw:["long-term view","perseverance","investment"],emoji:"🌱",up:"全身心投入技艺的精进；专注与勤奋；以重复练习追求卓越",rev:"工作狂忽视生活；缺乏技能却急于行动；质量低下",upEn:"Dedicated to mastering a craft; focused and diligent; excellence through repetition",revEn:"Workaholic neglecting life; lacking skill but rushing; poor quality output"},
+  {id:72,name:"Eight of Pentacles",nameZh:"星币八",suit:"pentacles",suitZh:"星币",kw:["mastery","skill","diligence"],emoji:"🔨",up:"通过努力获得的丰盛；优雅的独立；物质与精神双重满足",rev:"财务或情感过度依赖；以物质掩盖内心不安；失去独立",upEn:"Abundance earned through effort; elegant independence; material and spiritual fulfillment",revEn:"Financial or emotional over-dependence; materialism masks inner insecurity"},
+  {id:73,name:"Nine of Pentacles",nameZh:"星币九",suit:"pentacles",suitZh:"星币",kw:["abundance","luxury","self-sufficiency"],emoji:"🌷",up:"长久的财富与稳定；家族传承与荣耀；圆满的物质成就",rev:"家族矛盾与纠纷；遗产或财务争议；表面丰盛内里空洞",upEn:"Lasting wealth and stability; family legacy and honor; wholeness of material achievement",revEn:"Family conflict and disputes; inheritance or financial disputes; hollow abundance"},
+  {id:74,name:"Ten of Pentacles",nameZh:"星币十",suit:"pentacles",suitZh:"星币",kw:["wealth","security","legacy"],emoji:"🏠",up:"充满热情的学习者；实际机会的开端；将梦想落地",rev:"计划停留在理论；分心导致进展缓慢；目标好高骛远",upEn:"Enthusiastic learner; practical opportunity begins; bringing dreams to earth; focus on skills",revEn:"Plans stay theoretical; distraction slows progress; goal too high, too soon"},
+  {id:75,name:"Page of Pentacles",nameZh:"星币侍从",suit:"pentacles",suitZh:"星币",kw:["manifestation","opportunity","diligence"],emoji:"📚",up:"可靠且脚踏实地；以稳定的方法推进目标；不急不躁",rev:"行动迟缓停滞；过于固执；缺乏活力与弹性",upEn:"Reliable and grounded; steady method to advance goals; unhurried; persistence",revEn:"Slow and stagnant action; too rigid to adapt; lacks vitality and flexibility"},
+  {id:76,name:"Knight of Pentacles",nameZh:"星币骑士",suit:"pentacles",suitZh:"星币",kw:["efficiency","hard work","routine"],emoji:"🐂",up:"务实而充满滋养力；将家庭与职业兼顾得当；物质与情感并存",rev:"过度保护或工作狂；忘记照顾自己；物质主义",upEn:"Practical and nurturing; balancing family and career; material security with emotional warmth",revEn:"Over-protective or workaholic; forgetting self-care; materialism masks needs"},
+  {id:77,name:"Queen of Pentacles",nameZh:"星币女王",suit:"pentacles",suitZh:"星币",kw:["practical","nurturing","security"],emoji:"🌿",up:"物质的成功与丰盛；以纪律和毅力积累财富；慷慨稳健",rev:"固执于金钱与物质；滥用资源或权力；以财富衡量一切",upEn:"Material success and abundance; discipline and perseverance build wealth; generous steady leadership",revEn:"Fixated on money; misusing resources or power; measuring everything by wealth"},
+  {id:78,name:"King of Pentacles",nameZh:"星币国王",suit:"pentacles",suitZh:"星币",kw:["abundance","prosperity","discipline"],emoji:"👑"},
+];
+
+const GRADIENTS=['linear-gradient(135deg,#1a0d2e,#3d1a5c)','linear-gradient(135deg,#0d1a2e,#1a3d5c)','linear-gradient(135deg,#2e0d1a,#5c1a3d)','linear-gradient(135deg,#0d2e1a,#1a5c3d)','linear-gradient(135deg,#2e1a0d,#5c3d1a)','linear-gradient(135deg,#1a2e0d,#3d5c1a)','linear-gradient(135deg,#1e1a0d,#4a3d0f)','linear-gradient(135deg,#0d1e2e,#0f3d4a)'];
+
+const REVELATIONS = {
+  three: {
+    zh:[
+      "星流三柱交汇，时间的褶皱在此展开。你所经历的一切并非偶然——过去种下的种子，正在此刻无声地开放，而未来已在你每一次微小的选择中悄然成形。",
+      "三张牌如三面镜，照见你从未正视的自己。过去不是枷锁，现在不是终点，未来只是另一个开始的名字。",
+    ],
+    en:[
+      "Three pillars of time converge in the spread before you. What you have lived was not random — the seeds of the past bloom quietly in this moment, while the future takes shape in each small choice you make.",
+      "Three cards as three mirrors, reflecting the self you have never fully faced. The past is not a chain; the present is not the end; the future is simply another name for a beginning.",
+    ]
+  },
+  four: {
+    zh:[
+      "四力汇聚，直指你问题的核心。迷雾散去，牌阵以外科手术般的清晰度照亮前路。障碍从未是墙——它们是伪装成考验的老师。",
+      "星议会已权衡你的问题。那看似屏障之处，正是你蜕变的门扉。宇宙早已将优势置于你手中，你所需的只是认清它。",
+    ],
+    en:[
+      "Four forces converge, cutting through illusion to the core of your question. Where confusion clouded your vision, the cards now illuminate the path with clarity. Obstacles are not walls — they are teachers in disguise.",
+      "The celestial council has weighed your question. What appears as a barrier is the doorway through which your evolution walks. The universe has already placed the advantage in your hands — you need only recognize it.",
+    ]
+  },
+  five: {
+    zh:[
+      "岔路牌阵将两条路以同等光芒托举。两者皆非错误——各自通向一个值得成为的自己。牌阵照见的不只是结果，更是你携入每条路的隐藏能量。",
+      "神圣的岔路出现了。宇宙不为你选择——它揭示的，是你在最深沉的静默中早已知晓的答案。两条路都有美丽，都有代价。",
+    ],
+    en:[
+      "The crossroads spread holds both paths in equal light. Neither is wrong — each leads to a version of yourself worth becoming. The cards illuminate not just outcomes, but the hidden energies you carry into each choice.",
+      "A sacred crossroads appears. The universe does not choose for you — it reveals what you already know in your deepest silence. Both paths carry beauty; both carry cost.",
+    ]
+  }
+};
+
+/* ================================================================
+   STATE
+   ================================================================ */
+let currentDraw = [];
+let currentSpread = null;
+let currentTab = 'draw';
+let selectedSpreadId = 'three';
+let currentQuestion = '';
+
+/* ================================================================
+   STARS (no meteors)
+   ================================================================ */
+(function(){
+  const bg=document.getElementById('starfield');
+  const anis=['twinkle-a','twinkle-b','twinkle-c'];
+  for(let i=0;i<85;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=Math.random()<.08?3.5:Math.random()<.3?2.2:1.4;
+    const dur=(3+Math.random()*6).toFixed(1);
+    const delay=(Math.random()*-10).toFixed(1);
+    const ani=anis[Math.floor(Math.random()*3)];
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${(Math.random()*100).toFixed(1)}%;top:${(Math.random()*100).toFixed(1)}%;background:rgba(244,194,194,${(.12+Math.random()*.5).toFixed(2)});animation:${ani} ${dur}s ease-in-out infinite ${delay}s`;
+    bg.appendChild(s);
+  }
+  for(let i=0;i<8;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=(3+Math.random()*2).toFixed(1);
+    const dur=(5+Math.random()*8).toFixed(1);
+    const delay=(Math.random()*-12).toFixed(1);
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${(Math.random()*100).toFixed(1)}%;top:${(Math.random()*100).toFixed(1)}%;background:rgba(255,45,171,${(.2+Math.random()*.4).toFixed(2)});box-shadow:0 0 ${4+Math.floor(Math.random()*4)}px rgba(255,45,171,.5);animation:pulse-star ${dur}s ease-in-out infinite ${delay}s`;
+    bg.appendChild(s);
+  }
+  for(let i=0;i<22;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=(1+Math.random()).toFixed(1);
+    const dur=(14+Math.random()*12).toFixed(1);
+    const delay=(Math.random()*-20).toFixed(1);
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${(Math.random()*100).toFixed(1)}%;top:${(30+Math.random()*70).toFixed(1)}%;background:rgba(244,194,194,${(.08+Math.random()*.22).toFixed(2)});animation:drift ${dur}s ease-in-out infinite ${delay}s`;
+    bg.appendChild(s);
+  }
+})();
+
+/* ================================================================
+   CARD IMAGE HELPER
+   ================================================================ */
+function makeCardImg(id, name) {
+  const card=TAROT.find(c=>c.id===id);
+  const grad=GRADIENTS[(id-1)%GRADIENTS.length];
+  const emoji=card?card.emoji:'✨';
+  const wrap=document.createElement('div');
+  wrap.style.cssText='width:100%;height:100%;position:relative';
+  const customImages=JSON.parse(localStorage.getItem('cardImages')||'{}');
+  const img=document.createElement('img');
+  img.src=customImages[id]||`tarot-cards/card-${id}.jpg`;
+  img.alt=name;
+  img.style.cssText='width:100%;height:100%;object-fit:cover;display:block';
+  img.onerror=function(){
+    this.style.display='none';
+    const ph=document.createElement('div');
+    ph.className='card-placeholder';ph.style.background=grad;
+    ph.innerHTML=`<span class="cp-emoji">${emoji}</span><span class="cp-name">${name}</span>`;
+    wrap.appendChild(ph);
+  };
+  wrap.appendChild(img);
+  return wrap;
+}
+
+function cardName(card) { return lang==='zh'?(card.nameZh||card.name):card.name; }
+function cardSuit(card) { return lang==='zh'?(card.suitZh||card.suit):card.suit; }
+
+/* ================================================================
+   SPREAD OPTIONS RENDER
+   ================================================================ */
+let recommendedSpreadId = null;
+
+function renderSpreadOptions() {
+  const spreads=getSpreads();
+  const container=document.getElementById('spreadOptions');
+  container.innerHTML='';
+  spreads.forEach(sp=>{
+    const el=document.createElement('div');
+    el.className='spread-option'+(sp.id===selectedSpreadId?' selected':'');
+    el.dataset.spreadId=sp.id;
+    const badge=(sp.id===recommendedSpreadId)?`<span class="spread-recommend-badge">${I18N[lang].recommendedLabel}</span>`:'';
+    el.innerHTML=`
+      <div class="spread-num">${sp.emoji}</div>
+      <div class="spread-info">
+        <div class="spread-name">${sp.name} <span style="opacity:.45;font-weight:400;font-size:10px">${sp.nameEn}</span> ${badge}</div>
+        <div class="spread-desc">${sp.desc}</div>
+        <div class="spread-positions-hint">${sp.pills.map(p=>`<span class="pos-pill">${p}</span>`).join('')}</div>
+      </div>`;
+    el.addEventListener('click',()=>{
+      selectedSpreadId=sp.id;
+      document.querySelectorAll('.spread-option').forEach(o=>o.classList.remove('selected'));
+      el.classList.add('selected');
+    });
+    container.appendChild(el);
+  });
+}
+
+/* ================================================================
+   SMART SPREAD RECOMMENDATION
+   ================================================================ */
+const SPREAD_KEYWORDS = {
+  five: {
+    zh: ['选择','二选一','还是','或者','应该选','A还是B','哪个','哪条','两个','纠结','多选','犹豫不决','去还是不去','做还是不做','接受还是拒绝','要不要','该不该','是否应该'],
+    en: ['choose','either','which','option','or','between','select','pick','decision','path','should i go','should i stay','accept or','a or b']
+  },
+  four: {
+    zh: ['怎么办','如何解决','怎样才能','困难','障碍','问题','建议','帮助','怎么做','方法','出路','突破','困境','办法','对策','策略','克服','面对','解决','应对','处理','改善','提升','什么建议','如何应对','我该怎么','有什么办法'],
+    en: ['how to','how can','how do','advice','solve','problem','solution','obstacle','challenge','overcome','strategy','what should','help me','deal with','handle','improve','fix','approach','stuck','struggling']
+  },
+  three: {
+    zh: ['未来','过去','现在','感觉','状态','走向','关系','感情','他','她','对方','怎么看','会怎样','发展','前景','接下来','趋势','命运','运势','情况','心态','想法','态度','可能','结果','时间','什么时候','最近','近期','这段'],
+    en: ['future','past','present','feel','feeling','relationship','how does','what will','outlook','direction','trend','fate','fortune','situation','state','he','she','they','about me','what is','where is','when','energy','vibe']
+  }
+};
+
+function detectSpread(question) {
+  if(!question||question.length<2) return null;
+  const q=question.toLowerCase();
+  // Priority: five (choice) > four (problem/advice) > three (general)
+  for(const sid of ['five','four','three']){
+    const kwLang=SPREAD_KEYWORDS[sid][lang]||SPREAD_KEYWORDS[sid].zh;
+    if(kwLang.some(kw=>q.includes(kw))) return sid;
+  }
+  return 'three'; // default fallback for any question
+}
+
+let questionDebounce=null;
+function onQuestionInput() {
+  clearTimeout(questionDebounce);
+  questionDebounce=setTimeout(()=>{
+    const q=(document.getElementById('questionInput').value||'').trim();
+    const detected=detectSpread(q);
+    if(detected && q.length>=2){
+      recommendedSpreadId=detected;
+      selectedSpreadId=detected;
+      renderSpreadOptions();
+      // Scroll recommended into view with a flash
+      const el=document.querySelector(`.spread-option[data-spread-id="${detected}"]`);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    } else {
+      recommendedSpreadId=null;
+      renderSpreadOptions();
+    }
+  },400);
+}
+
+function toggleSpreadList(){
+  const sel=document.getElementById('spreadSelector');
+  sel.classList.toggle('collapsed');
+  const btn=document.getElementById('spreadToggleBtn');
+  btn.textContent=sel.classList.contains('collapsed')?I18N[lang].spreadToggleExpand:I18N[lang].spreadToggleCollapse;
+}
+
+/* ================================================================
+   TAB SWITCHING
+   ================================================================ */
+function switchTab(tab) {
+  ['draw','insight','vault'].forEach(t=>{
+    document.getElementById(t+'-page').classList.toggle('active',t===tab);
+    document.getElementById('nav-'+t).classList.toggle('active',t===tab);
+  });
+  currentTab=tab;
+  if(tab==='vault') renderVault();
+  if(tab==='insight'&&currentDraw.length) renderInsight();
+}
+
+/* ================================================================
+   DRAW
+   ================================================================ */
+function startDraw() {
+  const spreads=getSpreads();
+  currentSpread=spreads.find(s=>s.id===selectedSpreadId)||spreads[0];
+  currentQuestion=(document.getElementById('questionInput')||{}).value||'';
+  currentQuestion=currentQuestion.trim();
+  const shuffled=[...TAROT].sort(()=>Math.random()-.5);
+  currentDraw=shuffled.slice(0,currentSpread.count).map((card,i)=>({
+    card,reversed:Math.random()<0.3,
+    position:currentSpread.positions[i],
+    positionEn:currentSpread.positionsEn[i],
+  }));
+  showFlipOverlay();
+}
+
+/* ================================================================
+   FLIP OVERLAY
+   ================================================================ */
+function showFlipOverlay() {
+  const overlay=document.getElementById('flip-overlay');
+  const row=document.getElementById('flipRow');
+  const btn=document.getElementById('flipContinue');
+  document.getElementById('flipLabel').textContent=t('flipLabel');
+  document.getElementById('flipTitle').textContent=t('flipTitle');
+  document.getElementById('flipSpreadName').textContent=currentSpread.name;
+  btn.textContent=t('flipContinue');
+  overlay.style.display='flex';
+  btn.classList.remove('visible');
+  row.innerHTML='';
+  const count=currentDraw.length;
+  const cardW=count<=3?90:count===4?82:72;
+  const cardH=count<=3?140:count===4?126:112;
+  currentDraw.forEach((item,i)=>{
+    const wrap=document.createElement('div');
+    wrap.className='card-flip-wrap';wrap.style.cssText=`width:${cardW}px;height:${cardH}px`;
+    const inner=document.createElement('div');inner.className='card-flip-inner';
+    const back=document.createElement('div');back.className='card-back';
+    back.innerHTML=`<div class="card-back-pattern"></div><div class="card-back-inner">🔮</div>`;
+    const face=document.createElement('div');face.className='card-face';
+    if(item.reversed) face.style.cssText='position:absolute;inset:0;border-radius:9px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;background:var(--s2);border:1px solid rgba(255,140,66,.44);transform:rotateY(180deg);padding:7px;gap:4px';
+    const imgBox=document.createElement('div');imgBox.className='card-face-img';
+    const imgWrap=makeCardImg(item.card.id,cardName(item.card));
+    if(item.reversed) imgWrap.style.transform='rotate(180deg)';
+    imgBox.appendChild(imgWrap);
+    const posEl=document.createElement('div');posEl.className='card-pos-label';posEl.textContent=item.positionEn;
+    const nameEl=document.createElement('div');nameEl.className='card-face-name';nameEl.textContent=cardName(item.card);
+    face.appendChild(imgBox);face.appendChild(nameEl);
+    if(item.reversed){const rt=document.createElement('div');rt.className='card-reversed-tag';rt.textContent='↓ Rev';face.appendChild(rt);}
+    face.appendChild(posEl);
+    inner.appendChild(back);inner.appendChild(face);
+    wrap.appendChild(inner);row.appendChild(wrap);
+    setTimeout(()=>inner.classList.add('flipped'),800+i*650);
+  });
+  const totalFlip=800+(count-1)*650+1100+800;
+  setTimeout(()=>btn.classList.add('visible'),totalFlip);
+}
+
+function goToInsight(){
+  document.getElementById('flip-overlay').style.display='none';
+  saveToVault();switchTab('insight');
+}
+
+/* ================================================================
+   INSIGHT RENDER
+   ================================================================ */
+function renderInsight(){
+  // Question banner
+  const banner=document.getElementById('insightQBanner');
+  if(banner){
+    if(currentQuestion){
+      setText('iqLabel', I18N[lang].iqLabel);
+      document.getElementById('iqText').textContent=currentQuestion;
+      banner.style.display='flex';
+    } else banner.style.display='none';
+  }
+
+  const container=document.getElementById('spreadCards');
+  Array.from(container.querySelectorAll('.spread-card,.spread-5-row')).forEach(el=>el.remove());
+  const glow=container.querySelector('.spread-glow');
+  container.className='spread-cards spread-'+currentSpread.count;
+  document.getElementById('spreadAlignLabel').textContent=lang==='zh'?currentSpread.name:currentSpread.nameEn;
+
+  const L=I18N[lang];
+  document.getElementById('revelationTitle').textContent=L.revTitles[currentSpread.id]||currentSpread.name;
+  setText('revEyebrow', I18N[lang].overallReadingEyebrow);
+
+  if(currentSpread.count===5){
+    const r1=document.createElement('div');r1.className='spread-5-row';
+    const r2=document.createElement('div');r2.className='spread-5-row';
+    currentDraw.forEach((item,i)=>(i<3?r1:r2).appendChild(makeSpreadCard(item)));
+    container.insertBefore(r1,glow);container.insertBefore(r2,glow);
+  } else {
+    currentDraw.forEach(item=>container.insertBefore(makeSpreadCard(item),glow));
+  }
+
+  // Overall revelation body
+  const revPool=REVELATIONS[currentSpread.id]?.[lang]||REVELATIONS.three[lang];
+  const hashVal=currentDraw.reduce((a,c)=>a+c.card.id,0);
+  document.getElementById('revelationBody').textContent=revPool[hashVal%revPool.length];
+
+  // Question-specific answer box — AI-powered or static fallback
+  const qaBox=document.getElementById('qaBox');
+  if(currentQuestion && qaBox){
+    setText('qaEyebrow', I18N[lang].qaEyebrow);
+    // Show loading state immediately
+    document.getElementById('qaAnswer').innerHTML='<div class="qa-loading"><div class="qa-loading-dots"><span></span><span></span><span></span></div><div class="qa-loading-text">'+(lang==='zh'?'塔罗师正在解读...':'The oracle is reading...')+'</div></div>';
+    document.getElementById('qaAction').textContent='';
+    qaBox.style.display='block';
+    // Call AI for the main reading
+    callAIReading(currentQuestion, currentDraw, currentSpread).then(aiResult=>{
+      if(aiResult && aiResult.overall){
+        document.getElementById('qaAnswer').textContent=aiResult.overall;
+        document.getElementById('qaAction').textContent=aiResult.action||'';
+        // Update accordion bodies with AI per-card readings
+        if(aiResult.cards && aiResult.cards.length){
+          aiResult.cards.forEach((cardReading,i)=>{
+            const accBody=document.querySelectorAll('.ca-body')[i];
+            if(accBody){
+              const aiEl=accBody.querySelector('.ca-ai-reading');
+              if(aiEl) aiEl.textContent=cardReading;
+            }
+          });
+        }
+        // Store AI reading in vault
+        updateVaultWithAI(aiResult);
+      }
+    }).catch(err=>{
+      console.log('AI reading failed, using static fallback:', err);
+      // Static fallback
+      const qaText=buildQAAnswer(currentQuestion, currentDraw, currentSpread);
+      const qaAct=buildQAAction(currentQuestion, currentDraw, currentSpread);
+      document.getElementById('qaAnswer').textContent=qaText;
+      document.getElementById('qaAction').textContent=qaAct;
+    });
+  } else if(qaBox) qaBox.style.display='none';
+
+  // Hide old advice box & card-readings if they exist
+  const oldAdvice=document.getElementById('adviceBox');
+  if(oldAdvice)oldAdvice.style.display='none';
+  const oldReadings=document.getElementById('cardReadings');
+  if(oldReadings)oldReadings.innerHTML='';
+
+  // Build card accordions (with placeholder for AI per-card readings)
+  buildCardAccordions();
+  renderLibrary();
+}
+
+function buildCardAccordions(){
+  const container=document.getElementById('cardAccordions');
+  if(!container)return;
+  container.innerHTML='';
+  if(document.getElementById('cardsSectionTitle'))
+    setText('cardsSectionTitle', I18N[lang].cardsSectionTitle);
+  
+  currentDraw.forEach((item,i)=>{
+    const card=item.card;
+    const isRev=item.reversed;
+    const name=cardName(card);
+    const meaningText=lang==='zh'?(isRev?(card.rev||card.kw.join('；')):(card.up||card.kw.join('；'))):(isRev?(card.revEn||card.kw.join('; ')):(card.upEn||card.kw.join('; ')));
+    const prefix=currentSpread.readingPrefix[i]||'';
+    const kw=card.kw;
+
+    // Question-specific sentence per card — uses actual zh/en meaning, not raw kw
+    let qSpecific='';
+    if(currentQuestion){
+      const cardMeaning=lang==='zh'
+        ?(isRev?(card.rev||card.kw.join('；')):(card.up||card.kw.join('；')))
+        :(isRev?(card.revEn||card.kw.join(', ')):(card.upEn||card.kw.join(', ')));
+      const firstClause=cardMeaning.split(lang==='zh'?'；':';')[0].trim();
+      if(lang==='zh'){
+        qSpecific=isRev
+          ?`对于你的问题，逆位${name}的提示：${cardMeaning}。此刻需要注意"${firstClause}"这一层面。`
+          :`对于你的问题，${name}的指引是：${cardMeaning}。尤其关注"${firstClause}"的能量对你当前处境的影响。`;
+      } else {
+        qSpecific=isRev
+          ?`For your question, reversed ${name} suggests: ${cardMeaning}. Pay particular attention to "${firstClause}" in this context.`
+          :`For your question, ${name} guides with: ${cardMeaning}. Focus especially on "${firstClause}" as it relates to your situation.`;
+      }
+    }
+
+    const cardMeaningForAdv=lang==='zh'
+      ?(isRev?(card.rev||card.kw.join('；')):(card.up||card.kw.join('；')))
+      :(isRev?(card.revEn||card.kw.join(', ')):(card.upEn||card.kw.join(', ')));
+    const advAnchor=cardMeaningForAdv.split(lang==='zh'?'；':';')[0].trim();
+    const advice=lang==='zh'
+      ?(isRev?`建议：向内审视"${advAnchor}"的根源，暂缓外部的行动与表达。`:`建议：主动朝"${advAnchor}"的方向行动，这是此刻最有力的一步。`)
+      :(isRev?`Guidance: Look inward at the root of "${advAnchor}" before taking external action.`:`Guidance: Actively move toward "${advAnchor}" — this is your most powerful next step.`);
+
+    const acc=document.createElement('div');acc.className='card-accordion';
+    
+    const hdr=document.createElement('div');hdr.className='ca-header';
+    
+    const thumb=document.createElement('div');thumb.className='ca-thumb'+(isRev?' rev':'');
+    const thumbInner=document.createElement('div');thumbInner.className='ca-thumb-inner';
+    thumbInner.appendChild(makeCardImg(card.id,name));
+    thumb.appendChild(thumbInner);
+
+    const info=document.createElement('div');info.className='ca-info';
+    const posEl=document.createElement('div');posEl.className='ca-pos';posEl.textContent=item.position;
+    const nameRow=document.createElement('div');nameRow.className='ca-name-row';
+    const nmEl=document.createElement('span');nmEl.className='ca-name';nmEl.textContent=name;
+    nameRow.appendChild(nmEl);
+    if(isRev){const rb=document.createElement('span');rb.className='ca-rev-badge';rb.textContent=I18N[lang].revBadge;nameRow.appendChild(rb);}
+    info.appendChild(posEl);info.appendChild(nameRow);
+
+    const chev=document.createElement('div');chev.className='ca-chevron';chev.textContent='▾';
+
+    hdr.appendChild(thumb);hdr.appendChild(info);hdr.appendChild(chev);
+
+    const body=document.createElement('div');body.className='ca-body';
+    const mEl=document.createElement('p');mEl.className='ca-meaning';mEl.textContent=meaningText;
+    body.appendChild(mEl);
+    // AI per-card reading placeholder (will be filled by AI response)
+    if(currentQuestion){
+      const aiEl=document.createElement('p');aiEl.className='ca-ai-reading ca-ai-loading';
+      aiEl.textContent=lang==='zh'?'AI 解读加载中...':'AI reading loading...';
+      body.appendChild(aiEl);
+    } else if(qSpecific){
+      const qs=document.createElement('p');qs.className='ca-q-specific';qs.textContent=qSpecific;
+      body.appendChild(qs);
+    }
+    const adv=document.createElement('p');adv.className='ca-advice';adv.textContent=advice;body.appendChild(adv);
+
+    hdr.addEventListener('click',()=>{
+      const open=body.classList.toggle('show');
+      chev.classList.toggle('open',open);
+    });
+
+    acc.appendChild(hdr);acc.appendChild(body);
+    container.appendChild(acc);
+  });
+}
+
+function makeSpreadCard(item){
+  const div=document.createElement('div');
+  // For reversed: only art image rotates, not the whole card
+  div.className='spread-card'+(item.reversed?' reversed':'');
+  const art=document.createElement('div');art.className='spread-card-art';
+  // Art inner wrapper handles rotation
+  const artInner=document.createElement('div');
+  artInner.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center';
+  if(item.reversed)artInner.style.transform='rotate(180deg)';
+  artInner.appendChild(makeCardImg(item.card.id,cardName(item.card)));
+  art.appendChild(artInner);
+  const pos=document.createElement('div');pos.className='spread-card-pos';pos.textContent=item.position;
+  // Name row: card name + inline reversed tag
+  const nmRow=document.createElement('div');nmRow.className='spread-card-name-row';
+  const nmEl=document.createElement('span');nmEl.className='spread-card-name';nmEl.textContent=cardName(item.card);
+  nmRow.appendChild(nmEl);
+  if(item.reversed){
+    const rt=document.createElement('span');rt.className='spread-card-rev-inline';
+    rt.textContent=I18N[lang].revBadge;
+    nmRow.appendChild(rt);
+  }
+  div.appendChild(art);div.appendChild(pos);div.appendChild(nmRow);
+  return div;
+}
+
+/* ================================================================
+   LIBRARY (preview 9 + full overlay)
+   ================================================================ */
+function renderLibrary(){
+  const grid=document.getElementById('libraryGrid');
+  grid.innerHTML='';
+  TAROT.slice(0,9).forEach(card=>{
+    const div=document.createElement('div');
+    const art=document.createElement('div');art.className='lib-card-art';
+    art.appendChild(makeCardImg(card.id,cardName(card)));
+    art.addEventListener('click',()=>openCardDetail(card.id));
+    const nm=document.createElement('div');nm.className='lib-card-name';nm.textContent=cardName(card);
+    div.appendChild(art);div.appendChild(nm);
+    grid.appendChild(div);
+  });
+}
+
+function openLibraryOverlay(){
+  const overlay=document.getElementById('library-overlay');
+  const grid=document.getElementById('libOvGrid');
+  setText('libOvTitle', I18N[lang].libOvTitle);
+  setText('libOvCount', I18N[lang].libOvCount);
+  grid.innerHTML='';
+  TAROT.forEach(card=>{
+    const div=document.createElement('div');div.className='lib-ov-card';
+    const art=document.createElement('div');art.className='lib-ov-art';
+    art.appendChild(makeCardImg(card.id,cardName(card)));
+    art.addEventListener('click',()=>{ closeLibraryOverlay(); openCardDetail(card.id); });
+    const nm=document.createElement('div');nm.className='lib-ov-name';nm.textContent=cardName(card);
+    const suit=document.createElement('div');suit.className='lib-ov-suit';suit.textContent=cardSuit(card);
+    div.appendChild(art);div.appendChild(nm);div.appendChild(suit);
+    grid.appendChild(div);
+  });
+  overlay.classList.add('open');
+}
+
+/* ================================================================
+   QA ANSWER BUILDER — card-specific, question-aware
+   ================================================================ */
+
+// Detect question topic category
+function detectQTopic(q) {
+  const qL = q.toLowerCase();
+  const topics = {
+    person: {
+      zh: ['长相','外貌','性格','什么样','是谁','他','她','ta','对方','喜欢我吗','爱我吗','喜不喜欢','心里有我吗','他/她','这个人','是什么人','未来伴侣','下任','男友','女友','伴侣','他/她对我'],
+      en: ['look like','appearance','personality','who is','what kind of person','what is he','what is she','does he','does she','like me','love me','my ex','next partner','boyfriend','girlfriend','partner','spouse','crush']
+    },
+    relationship: {
+      zh: ['感情','关系','在一起','分手','复合','暧昧','表白','喜欢','爱情','婚姻','相处','恋爱','联系','结婚','脱单','追','追到','约会'],
+      en: ['relationship','love','together','break up','reconcile','date','dating','marriage','romantic','feelings','attraction','ex','confess','propose']
+    },
+    career: {
+      zh: ['工作','职业','事业','升职','加薪','找工作','跳槽','辞职','创业','公司','上司','同事','项目','面试','职场','收入','薪资'],
+      en: ['job','career','work','promotion','salary','business','startup','company','boss','colleague','project','interview','workplace','income']
+    },
+    decision: {
+      zh: ['要不要','该不该','选择','还是','去还是','做还是','接受还是','拒绝','二选一','应该','是否'],
+      en: ['should i','should I','choose','choice','either','or','decision','which','option','pick']
+    },
+    future: {
+      zh: ['未来','会怎样','结果','发展','走向','前途','前景','趋势','接下来','结局','命运'],
+      en: ['future','will','outcome','result','develop','direction','fortune','destiny','next','end up']
+    }
+  };
+  for(const [topic, kws] of Object.entries(topics)){
+    const kwSet = (lang==='zh'? kws.zh : kws.en) || kws.zh;
+    if(kwSet.some(kw=>qL.includes(kw))) return topic;
+  }
+  return 'general';
+}
+
+// Build the main QA paragraph — uses card meanings, references question topic
+function buildQAAnswer(question, draw, spread) {
+  const topic = detectQTopic(question);
+  const isZh = lang === 'zh';
+
+  // Build per-card meaning sentences
+  const cardSentences = draw.map((item, i) => {
+    const card = item.card;
+    const isRev = item.reversed;
+    const name = cardName(card);
+    const pos = item.position;
+    const meaning = isZh
+      ? (isRev ? (card.rev || card.kw.join('；')) : (card.up || card.kw.join('；')))
+      : (isRev ? (card.revEn || card.kw.join(', ')) : (card.upEn || card.kw.join(', ')));
+
+    if(isZh) {
+      return `【${pos}】${name}${isRev?'（逆位）':''}：${meaning}`;
+    } else {
+      return `[${pos}] ${name}${isRev?' (reversed)':''}: ${meaning}`;
+    }
+  });
+
+  // Build topic-aware intro sentence
+  let intro = '';
+  const mainCard = draw.find(c=>!c.reversed) || draw[0];
+  const mainName = cardName(mainCard.card);
+  const mainMeaning = isZh
+    ? (mainCard.reversed ? (mainCard.card.rev||'') : (mainCard.card.up||''))
+    : (mainCard.reversed ? (mainCard.card.revEn||'') : (mainCard.card.upEn||''));
+
+  if(isZh) {
+    const introMap = {
+      person: `根据牌阵，这个人带有${mainName}${mainCard.reversed?'（逆位）':''}的能量：${mainMeaning}。`,
+      relationship: `这段感情的走向，由${mainName}${mainCard.reversed?'（逆位）':''}主导：${mainMeaning}。`,
+      career: `关于这份工作/事业，${mainName}${mainCard.reversed?'（逆位）':''}这样说：${mainMeaning}。`,
+      decision: `针对你面临的选择，${mainName}${mainCard.reversed?'（逆位）':''}给出了方向：${mainMeaning}。`,
+      future: `关于接下来的走向，${mainName}${mainCard.reversed?'（逆位）':''}揭示：${mainMeaning}。`,
+      general: `牌阵对你的问题给出了回应，以${mainName}${mainCard.reversed?'（逆位）':''}为主：${mainMeaning}。`,
+    };
+    intro = introMap[topic] || introMap.general;
+  } else {
+    const introMap = {
+      person: `Based on the spread, this person carries the energy of ${mainName}${mainCard.reversed?' (reversed)':''}: ${mainMeaning}.`,
+      relationship: `This relationship's direction is shaped by ${mainName}${mainCard.reversed?' (reversed)':''}: ${mainMeaning}.`,
+      career: `Regarding this work or career path, ${mainName}${mainCard.reversed?' (reversed)':''} speaks: ${mainMeaning}.`,
+      decision: `For the choice you're facing, ${mainName}${mainCard.reversed?' (reversed)':''} points the way: ${mainMeaning}.`,
+      future: `Looking at what's ahead, ${mainName}${mainCard.reversed?' (reversed)':''} reveals: ${mainMeaning}.`,
+      general: `The spread responds to your question through ${mainName}${mainCard.reversed?' (reversed)':''}: ${mainMeaning}.`,
+    };
+    intro = introMap[topic] || introMap.general;
+  }
+
+  return intro + (isZh ? '\n\n' : '\n\n') + cardSentences.join(isZh ? '\n' : '\n');
+}
+
+// Build the action/advice line — uses zh card meanings, not raw English kw
+function buildQAAction(question, draw, spread) {
+  const isZh = lang === 'zh';
+  const topic = detectQTopic(question);
+  const mainCard = draw.find(c=>!c.reversed) || draw[0];
+  const isRev = mainCard.reversed;
+  const name = cardName(mainCard.card);
+  const meaning = isZh
+    ? (isRev ? (mainCard.card.rev||'') : (mainCard.card.up||''))
+    : (isRev ? (mainCard.card.revEn||'') : (mainCard.card.upEn||''));
+  // Take just the first clause of meaning as action anchor
+  const anchor = meaning.split(isZh?'；':';')[0].trim();
+
+  if(isZh) {
+    const actionMap = {
+      person: isRev
+        ? `这个人目前可能表现出${anchor}的一面，需要给彼此更多空间和时间来观察。`
+        : `这个人展现出${anchor}的特质，值得以开放的心去进一步了解。`,
+      relationship: isRev
+        ? `感情目前呈现出${anchor}的状态，建议先不要急于推进，先整理自己的心态。`
+        : `感情中有${anchor}的积极能量，可以顺势而为，以真诚的行动推进关系。`,
+      career: isRev
+        ? `工作方面目前有${anchor}的阻力，建议暂缓重大决定，先观察和准备。`
+        : `事业方向上有${anchor}的助力，是采取行动的好时机。`,
+      decision: isRev
+        ? `关于这个选择，${anchor}提示你暂时不要仓促决定，多给自己一些时间。`
+        : `牌阵支持你走向${anchor}的方向，信任自己的判断，迈出那一步。`,
+      future: isRev
+        ? `接下来可能会经历${anchor}的阶段，做好心理准备，保持弹性应对。`
+        : `未来的能量指向${anchor}，朝这个方向行动会得到宇宙的配合。`,
+      general: isRev
+        ? `此刻最需要关注的是${anchor}，建议向内审视后再做下一步决定。`
+        : `核心建议：顺着${anchor}的方向去行动，这是此刻最有力的选择。`,
+    };
+    return actionMap[topic] || actionMap.general;
+  } else {
+    const actionMap = {
+      person: isRev
+        ? `This person may currently be showing signs of "${anchor}." Give things more time and space before drawing conclusions.`
+        : `This person embodies "${anchor}." Approach with openness and genuine curiosity to learn more.`,
+      relationship: isRev
+        ? `The relationship currently reflects "${anchor}." Avoid rushing — take time to clarify your own feelings first.`
+        : `There's positive energy of "${anchor}" in this connection. Act with sincerity and let the relationship flow forward naturally.`,
+      career: isRev
+        ? `There's resistance in the form of "${anchor}" at work right now. Hold off on major decisions — observe and prepare.`
+        : `Your career path has the energy of "${anchor}" supporting it. This is a good moment to take decisive action.`,
+      decision: isRev
+        ? `Regarding your choice, "${anchor}" suggests don't rush. Give yourself more time before committing.`
+        : `The spread supports moving toward "${anchor}." Trust your judgment and take that step.`,
+      future: isRev
+        ? `A phase of "${anchor}" may be ahead. Prepare mentally and stay flexible.`
+        : `The future energy points toward "${anchor}." Acting in this direction will align with the flow of the universe.`,
+      general: isRev
+        ? `The most important focus now is "${anchor}." Look inward before making your next move.`
+        : `Core guidance: move in the direction of "${anchor}" — this is the most powerful choice available to you right now.`,
+    };
+    return actionMap[topic] || actionMap.general;
+  }
+}
+
+function closeLibraryOverlay(){document.getElementById('library-overlay').classList.remove('open')}
+
+function openCardDetail(id){
+  const card=TAROT.find(c=>c.id===id);if(!card)return;
+  const popup=document.getElementById('card-detail-popup');if(!popup)return;
+  const artEl=document.getElementById('cdpArt');artEl.innerHTML='';artEl.appendChild(makeCardImg(card.id,cardName(card)));
+  document.getElementById('cdpName').textContent=cardName(card);
+  document.getElementById('cdpSuit').textContent=cardSuit(card)+' '+card.emoji;
+  setText('cdpUpLbl', I18N[lang].cdpUpLbl);
+  setText('cdpRevLbl', I18N[lang].cdpRevLbl);
+  document.getElementById('cdpUpKw').textContent=lang==='zh'?(card.up||card.kw.join('；')):(card.upEn||card.kw.join('; '));
+  document.getElementById('cdpRevKw').textContent=lang==='zh'?(card.rev||card.kw.join('；')):(card.revEn||card.kw.join('; '));
+  popup.classList.add('open');
+}
+function closeCardDetail(){
+  const p=document.getElementById('card-detail-popup');if(p)p.classList.remove('open');
+}
+
+/* ================================================================
+   VAULT
+   ================================================================ */
+function saveToVault(){
+  if(!currentDraw.length) return;
+  const entries=JSON.parse(localStorage.getItem('aetheria_vault')||'[]');
+  const words=lang==='zh'?['天际','子夜','星辰','月光','宇宙','灵光','奥秘','神秘','星际','虚空']:['Celestial','Midnight','Stellar','Lunar','Cosmic','Arcane','Mystic','Astral','Void','Ethereal'];
+  const nouns=lang==='zh'?['启示','排列','悖论','汇聚','觉醒','异象','门槛','共鸣']:['Revelation','Alignment','Paradox','Confluence','Awakening','Vision','Threshold','Resonance'];
+  const title=words[Math.floor(Math.random()*words.length)]+' '+nouns[Math.floor(Math.random()*nouns.length)];
+  // Build summary text for vault
+  const revPool=REVELATIONS[currentSpread.id]?.[lang]||REVELATIONS.three[lang];
+  const hashVal=currentDraw.reduce((a,c)=>a+c.card.id,0);
+  const summary=revPool[hashVal%revPool.length];
+  entries.unshift({
+    id:Date.now(),timestamp:new Date().toISOString(),title,lang,
+    spreadId:currentSpread.id,spreadName:currentSpread.name,
+    question:currentQuestion,
+    summary:summary,
+    cards:currentDraw.map(c=>({id:c.card.id,name:c.card.name,nameZh:c.card.nameZh,reversed:c.reversed,position:c.position}))
+  });
+  localStorage.setItem('aetheria_vault',JSON.stringify(entries.slice(0,50)));
+}
+
+function renderVault(){
+  const entries=JSON.parse(localStorage.getItem('aetheria_vault')||'[]');
+  const list=document.getElementById('vaultList');
+  const empty=document.getElementById('vaultEmpty');
+  const footer=document.getElementById('vaultFooter');
+  list.innerHTML='';
+  if(!entries.length){empty.style.display='block';footer.style.display='none';return}
+  empty.style.display='none';footer.style.display='block';
+  entries.forEach((entry,idx)=>{
+    const d=new Date(entry.timestamp);
+    const dateStr=`${String(d.getDate()).padStart(2,'0')} ${d.toLocaleString('en-GB',{month:'short'}).toUpperCase()} ${d.getFullYear()} • ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const entryEl=document.createElement('div');entryEl.className='vault-entry';
+    const meta=document.createElement('div');meta.className='entry-meta-row';
+    meta.innerHTML=`<span class="entry-date">${dateStr}</span><div style="display:flex;align-items:center;gap:8px"><span class="entry-spread-badge">${entry.spreadName||''}</span><span class="entry-star">★</span></div>`;
+    entryEl.appendChild(meta);
+    const input=document.createElement('input');input.className='entry-title-input';
+    input.value=entry.title;input.dataset.id=entry.id;
+    input.addEventListener('blur',function(){
+      const all=JSON.parse(localStorage.getItem('aetheria_vault')||'[]');
+      const found=all.find(e=>e.id==this.dataset.id);
+      if(found){found.title=this.value;localStorage.setItem('aetheria_vault',JSON.stringify(all));}
+    });
+    entryEl.appendChild(input);
+    // Show question if present
+    if(entry.question){
+      const qEl=document.createElement('div');qEl.className='entry-question';
+      qEl.textContent=entry.question;
+      entryEl.appendChild(qEl);
+    }
+    const bottom=document.createElement('div');bottom.className='entry-bottom';
+    const thumbsRow=document.createElement('div');thumbsRow.className='thumbs-row';
+    entry.cards.forEach((c,ci)=>{
+      const th=document.createElement('div');th.className='thumb'+(c.reversed?' rev':'');th.style.zIndex=ci;
+      th.appendChild(makeCardImg(c.id,lang==='zh'?(c.nameZh||c.name):c.name));
+      thumbsRow.appendChild(th);
+    });
+    const recallBtn=document.createElement('button');recallBtn.className='recall-btn'+(idx===0?' featured':'');
+    recallBtn.textContent=t('recall');
+    recallBtn.addEventListener('click',()=>{
+      const spreads=getSpreads();
+      const sp=spreads.find(s=>s.id===entry.spreadId)||spreads[0];
+      currentSpread=sp;selectedSpreadId=sp.id;
+      currentQuestion=entry.question||'';
+      const qi=document.getElementById('questionInput');if(qi)qi.value=currentQuestion;
+      currentDraw=entry.cards.map((c,i)=>({
+        card:TAROT.find(t=>t.id===c.id),reversed:c.reversed||false,
+        position:sp.positions[i]||c.position,positionEn:sp.positionsEn[i]||'',
+      })).filter(c=>c.card);
+      switchTab('insight');
+    });
+    bottom.appendChild(thumbsRow);bottom.appendChild(recallBtn);
+    entryEl.appendChild(bottom);
+    // Expandable reading summary
+    if(entry.summary){
+      const expBtn=document.createElement('button');expBtn.className='entry-summary-btn';
+      expBtn.textContent=I18N[lang].expandSummary;
+      const sumBody=document.createElement('div');sumBody.className='entry-summary-body';
+      sumBody.textContent=entry.summary;
+      expBtn.addEventListener('click',()=>{
+        const showing=sumBody.classList.toggle('show');
+        expBtn.textContent=showing?I18N[lang].collapseSummary:I18N[lang].expandSummary;
+      });
+      entryEl.appendChild(expBtn);entryEl.appendChild(sumBody);
+    }
+    list.appendChild(entryEl);
+  });
+}
+
+
+
+/* ================================================================
+   AI READING — GPT-4o-mini via Netlify Function (API key stays server-side)
+   ================================================================ */
+
+async function callAIReading(question, draw, spread) {
+  const isZh = lang === 'zh';
+
+  // Build card info for the prompt
+  const cardInfo = draw.map((item, i) => {
+    const c = item.card;
+    const pos = item.position;
+    const orientation = item.reversed ? (isZh?'逆位':'Reversed') : (isZh?'正位':'Upright');
+    const meaning = isZh
+      ? (item.reversed ? (c.rev||c.kw.join('；')) : (c.up||c.kw.join('；')))
+      : (item.reversed ? (c.revEn||c.kw.join(', ')) : (c.upEn||c.kw.join(', ')));
+    const name = cardName(c);
+    return `${pos}: ${name} (${orientation}) - ${meaning}`;
+  }).join('\n');
+
+  const spreadName = isZh ? spread.name : spread.nameEn;
+  const positionNames = spread.positions.join(' → ');
+
+  const systemPrompt = isZh
+    ? `你是一位资深塔罗牌解读师，风格温暖、直接、有洞察力。根据用户的具体问题和抽到的牌，给出非常有针对性的解读。
+规则：
+- 直接回答问题，不绕弯子。问人就描述人，问感情就说方向，问事业就说具体建议
+- 用牌义来具体描述，不要空泛。比如审判牌正位问性格→"这个人很成熟完整，经历过重要转折，做事有规划"
+- 语气像一个有经验的朋友帮你看牌
+- 禁止使用"能量"、"宇宙"、"振动"等空泛词汇
+- 回复纯中文
+- 严格按JSON格式回复，不要加markdown代码块标记：
+{"overall":"针对问题的整体解读2-4句话","action":"一句具体建议","cards":["第1张牌1-2句","第2张牌1-2句","..."]}`
+    : `You are an experienced tarot reader — warm, direct, insightful. Give specific readings based on the user's question and cards.
+Rules:
+- Answer directly. If about a person, describe them. If about career, give concrete direction.
+- Use card meanings to paint a specific picture, e.g. Judgement upright for personality → "mature, self-aware, has been through transformation and come out stronger"
+- Tone: wise friend reading for you. No mystical fluff.
+- NEVER use vague words like "energy", "universe", "vibrations"
+- Reply English only
+- Strict JSON, no markdown fences:
+{"overall":"2-4 specific sentences answering the question","action":"One concrete suggestion","cards":["Card 1 specific reading 1-2 sentences","Card 2...","..."]}`;
+
+  const userPrompt = isZh
+    ? `我的问题：「${question}」\n牌阵：${spreadName}（${positionNames}）\n\n牌：\n${cardInfo}\n\n请针对我的问题，直接、具体地解读。`
+    : `Question: "${question}"\nSpread: ${spreadName} (${positionNames})\n\nCards:\n${cardInfo}\n\nGive a direct, specific reading for my question.`;
+
+  try {
+    // Call Netlify Function (keeps API key server-side)
+    const response = await fetch('/.netlify/functions/tarot-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ systemPrompt, userPrompt })
+    });
+
+    if (!response.ok) throw new Error('API returned ' + response.status);
+
+    const data = await response.json();
+    const text = data.text || '';
+
+    // Parse JSON — strip markdown fences just in case
+    const clean = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    const result = JSON.parse(clean);
+
+    return {
+      overall: result.overall || '',
+      action: result.action || '',
+      cards: result.cards || []
+    };
+  } catch (err) {
+    console.error('AI reading error:', err);
+    return null; // triggers static fallback
+  }
+}
+
+// Update the latest vault entry with AI reading
+function updateVaultWithAI(aiResult) {
+  try {
+    const entries = JSON.parse(localStorage.getItem('aetheria_vault') || '[]');
+    if (entries.length > 0) {
+      entries[0].aiReading = aiResult.overall;
+      entries[0].aiAction = aiResult.action;
+      entries[0].summary = aiResult.overall; // override static summary
+      localStorage.setItem('aetheria_vault', JSON.stringify(entries));
+    }
+  } catch(e) { console.log('vault update err', e); }
+}
+
+/* ================================================================
+   ADMIN
+   ================================================================ */
+const ADMIN_PASSWORD='oracle123';
+let customTarot=null,selectedImageCard=null,tempImageData=null;
+function showAdminLogin(){document.getElementById('adminLogin').style.display='flex'}
+function adminLogin(){
+  if(document.getElementById('adminPassword').value===ADMIN_PASSWORD){
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminPassword').value='';
+    openAdminPanel();
+  }else{alert('Password incorrect')}
+}
+function openAdminPanel(){loadCustomTarot();renderCardsList();populateCardSelect();document.getElementById('adminPanel').classList.add('active')}
+function closeAdminPanel(){document.getElementById('adminPanel').classList.remove('active')}
+function loadCustomTarot(){const s=localStorage.getItem('customTarot');customTarot=s?JSON.parse(s):JSON.parse(JSON.stringify(TAROT))}
+function renderCardsList(){
+  const list=document.getElementById('cardsList');list.innerHTML='';
+  customTarot.forEach(card=>{
+    const e=document.createElement('div');e.className='card-editor';
+    e.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">${card.id}. ${card.name}</div>
+    <div class="card-editor-row"><input type="text" class="card-editor-input" value="${card.name}" onchange="updateCard(${card.id},'name',this.value)"></div>
+    <div class="card-editor-row"><input type="text" class="card-editor-input" value="${card.suit}" onchange="updateCard(${card.id},'suit',this.value)"></div>
+    <div class="card-editor-row"><input type="text" class="card-editor-input" value="${card.kw.join(', ')}" onchange="updateCard(${card.id},'kw',this.value.split(',').map(k=>k.trim()))"></div>`;
+    list.appendChild(e);
+  });
+}
+function updateCard(id,field,value){const c=customTarot.find(c=>c.id===id);if(c)c[field]=value}
+function populateCardSelect(){
+  const s=document.getElementById('cardSelectForImage');s.innerHTML='<option value="">-- Select Card --</option>';
+  customTarot.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.id}. ${c.name}`;s.appendChild(o)});
+  s.addEventListener('change',e=>selectedImageCard=parseInt(e.target.value));
+}
+function handleImageUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{tempImageData=e.target.result;alert('Image ready.')};r.readAsDataURL(f)}
+function uploadCardImage(){
+  if(!selectedImageCard){alert('Select a card first');return}if(!tempImageData){alert('Select an image first');return}
+  const imgs=JSON.parse(localStorage.getItem('cardImages')||'{}');imgs[selectedImageCard]=tempImageData;
+  localStorage.setItem('cardImages',JSON.stringify(imgs));tempImageData=null;document.getElementById('imageUpload').value='';alert('Uploaded!');
+}
+function saveCustomTarot(){localStorage.setItem('customTarot',JSON.stringify(customTarot));TAROT.length=0;TAROT.push(...customTarot);alert('Saved!');renderLibrary()}
+function exportData(){
+  const blob=new Blob([JSON.stringify({tarot:customTarot,images:localStorage.getItem('cardImages'),vault:localStorage.getItem('aetheria_vault'),exportDate:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`oracle_backup_${Date.now()}.json`;a.click();
+}
+function handleImport(e){
+  const r=new FileReader();r.onload=e=>{
+    try{const d=JSON.parse(e.target.result);if(d.tarot){customTarot=d.tarot;localStorage.setItem('customTarot',JSON.stringify(customTarot));TAROT.length=0;TAROT.push(...customTarot);}
+    if(d.images)localStorage.setItem('cardImages',d.images);if(d.vault)localStorage.setItem('aetheria_vault',d.vault);
+    alert('Imported!');renderCardsList();renderLibrary();renderVault();}catch(err){alert('Import failed: '+err.message)}};
+  r.readAsText(e.target.files[0]);
+}
+function resetToDefault(){if(confirm('Reset all custom data?')){localStorage.removeItem('customTarot');localStorage.removeItem('cardImages');customTarot=JSON.parse(JSON.stringify(TAROT));loadCustomTarot();renderCardsList();renderLibrary();alert('Reset!')}}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+const savedTarot=localStorage.getItem('customTarot');
+if(savedTarot){TAROT.length=0;TAROT.push(...JSON.parse(savedTarot))}
+applyLang();
+renderLibrary();
+renderVault();
+</script>
+</body>
+</html>
