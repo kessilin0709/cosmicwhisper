@@ -151,6 +151,53 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .flip-continue.visible{opacity:1;pointer-events:auto}
 .flip-continue:hover{transform:translateY(-2px)}
 
+
+/* Crescent tarot table — replaces the old horizontal swipe deck only */
+#flip-overlay.tarot-picking{justify-content:flex-start;gap:10px;overflow-y:auto;overflow-x:hidden;padding:24px 12px 20px}
+#flip-overlay.tarot-picking .flip-spread-name{margin-bottom:0}
+#flip-overlay.tarot-picking .flip-title{font-size:23px}
+#flip-overlay.tarot-picking .flip-label{font-size:10px}
+#flip-overlay.tarot-picking .flip-row{max-width:none}
+.fan-deck-row{display:block!important;width:100%;flex:0 0 auto;max-width:100%!important;padding:0!important;position:relative}
+/* One continuous 78-card crescent: scroll the deck, not three stacks. */
+.tarot-table{width:100%;height:248px;position:relative;overflow-x:auto;overflow-y:hidden;touch-action:pan-x;user-select:none;-webkit-user-select:none;scrollbar-width:none;overscroll-behavior-x:contain;cursor:grab}
+.tarot-table::-webkit-scrollbar{display:none}
+.tarot-table.is-panning{cursor:grabbing}
+.fan-strip{height:242px;position:relative;isolation:isolate}
+.fan-scroll-toast{position:absolute;top:11px;left:50%;transform:translateX(-50%) translateY(5px);z-index:400;white-space:nowrap;background:rgba(15,14,25,.94);border:1px solid rgba(255,45,171,.4);box-shadow:0 6px 24px rgba(0,0,0,.4);border-radius:18px;padding:9px 16px;color:#f7cce6;font-size:12px;pointer-events:none;opacity:0;transition:opacity .25s,transform .25s}
+.fan-scroll-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.fan-card{touch-action:pan-x}
+
+.fan-strip::before{content:'';position:absolute;left:1%;right:1%;top:9px;bottom:2px;border-radius:50% / 42%;background:radial-gradient(ellipse at 50% 58%,rgba(87,34,65,.48),rgba(41,25,45,.52) 56%,rgba(21,17,27,.7) 74%,rgba(11,14,20,0) 76%);border:1px solid rgba(255,45,171,.10);pointer-events:none}
+.fan-strip::after{content:'✧　☾　✦　☽　✧';position:absolute;bottom:9px;left:0;width:100%;text-align:center;font-size:17px;letter-spacing:8px;color:rgba(255,45,171,.14);pointer-events:none}
+.fan-card{position:absolute;top:var(--y);left:calc(50% + var(--x));width:62px;height:100px;border-radius:7px;border:1px solid rgba(255,119,202,.42);background:linear-gradient(155deg,#3a1d3f 0%,#171526 52%,#29152e 100%);color:#e9a3d2;box-shadow:0 4px 10px rgba(0,0,0,.4);cursor:grab;transform:translate(-50%,-50%) rotate(var(--r)) scale(.72);opacity:0;transition:transform .24s cubic-bezier(.2,.8,.2,1),opacity .4s,border-color .2s,box-shadow .2s;transition-delay:var(--delay);padding:4px;touch-action:none;-webkit-tap-highlight-color:transparent}
+.fan-card.dealt{transform:translate(-50%,-50%) rotate(var(--r)) scale(1);opacity:1}
+.fan-card.dealt:hover,.fan-card.dealt:focus-visible{transform:translate(-50%,calc(-50% - 20px)) rotate(var(--r)) scale(1.22);border-color:#ff70c5;box-shadow:0 12px 24px rgba(0,0,0,.65),0 0 16px rgba(255,45,171,.45);z-index:250!important;outline:none}
+.fan-card.drag-origin{opacity:.24!important}
+.fan-card.picked{opacity:.1!important;pointer-events:none;transform:translate(-50%,-65%) rotate(var(--r)) scale(.9)!important}
+.fan-card-decoration{height:100%;width:100%;border:1px solid rgba(255,45,171,.38);border-radius:4px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;background:repeating-linear-gradient(45deg,transparent 0,transparent 7px,rgba(255,45,171,.045) 8px)}
+.fan-card-decoration span:first-child{font-size:20px}.fan-card-decoration span:last-child{font-size:10px;letter-spacing:3px;opacity:.7}
+.fan-instruction{text-align:center;font-size:11px;line-height:1.5;color:rgba(244,194,194,.65);padding:0 8px}
+.fan-selection-area{width:100%;min-height:132px;border:1px dashed rgba(255,45,171,.35);background:rgba(255,45,171,.045);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;transition:background .2s,border-color .2s}
+.fan-selection-area.drag-over{background:rgba(255,45,171,.18);border-color:#ff2dab}
+.fan-selection-title{font-size:10px;color:rgba(244,194,194,.7);letter-spacing:.07em;text-align:center}
+.fan-selection-cards{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;min-height:85px;width:100%}
+.fan-slot{width:43px;height:69px;border:1px dashed rgba(255,45,171,.24);border-radius:6px;display:flex;align-items:center;justify-content:center;color:rgba(244,194,194,.2);font-size:10px}
+.fan-selected-card{width:43px;height:69px;flex:0 0 auto;border-radius:6px;background:linear-gradient(145deg,#3b1b3c,#121827);border:1px solid rgba(255,45,171,.6);color:#f3b2df;position:relative;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+.fan-selected-card small{position:absolute;bottom:3px;font-size:8px;color:rgba(244,194,194,.65)}
+.fan-selected-card .fan-remove{position:absolute;right:-5px;top:-7px;font-size:13px;color:#ffc2e6;background:#562548;border-radius:50%;width:16px;height:16px;line-height:16px;text-align:center}
+.fan-drag-ghost{position:fixed;width:62px;height:100px;z-index:600;pointer-events:none;border:1px solid #ff70c5;border-radius:7px;box-shadow:0 15px 40px rgba(0,0,0,.7),0 0 18px rgba(255,45,171,.4);background:linear-gradient(155deg,#3a1d3f,#171526);color:#e9a3d2;display:flex;align-items:center;justify-content:center;font-size:28px;transform:translate(-50%,-50%) rotate(-8deg)}
+#flip-overlay.tarot-picking #flipContinue{margin-top:3px;flex-shrink:0}
+@media(max-height:730px){#flip-overlay.tarot-picking{padding-top:12px}.tarot-table{height:230px}.fan-strip{height:225px}.fan-selection-area{min-height:106px}.fan-selection-cards{min-height:66px}}
+
+/* User-controlled swipe-to-draw deck */
+.swipe-deck-row{width:100%;max-width:100%;display:block;overflow:hidden;flex-wrap:nowrap}
+.swipe-track{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;padding:14px 24px 24px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;touch-action:pan-x}
+.swipe-card{flex:0 0 90px;width:90px;height:144px;scroll-snap-align:center;border-radius:10px;border:1px solid rgba(255,45,171,.48);background:linear-gradient(145deg,#251328,#101522);color:#ed87c2;display:flex;flex-direction:column;justify-content:space-around;align-items:center;cursor:pointer;transition:transform .25s,opacity .25s,border-color .25s;box-shadow:0 5px 18px rgba(0,0,0,.28);font-family:serif}
+.swipe-card-symbol{font-size:36px}.swipe-card-ornament{font-size:17px;opacity:.65}
+.swipe-card:active{transform:translateY(-8px)}.swipe-card.picked{opacity:.18;transform:translateY(-12px);pointer-events:none;border-color:var(--primary)}
+.swipe-status{font-size:11px;letter-spacing:.05em;color:rgba(244,194,194,.7);text-align:center}
+
 /* ===== INSIGHT PAGE ===== */
 #insight-page{padding:0}
 .insight-oracle-row{display:flex;gap:14px;align-items:flex-start;padding:20px 0 24px;border-bottom:1px solid rgba(178,76,76,.1)}
@@ -775,6 +822,8 @@ function applyLang() {
    ================================================================ */
 const SPREADS_DATA = {
   zh: [
+    {id:'free',name:'自由抽牌',nameEn:'Free Draw',emoji:'✦',desc:'无固定牌阵 · 随心抽取 1–6 张',count:6,flexible:true,positions:Array(6).fill('自由指引'),positionsEn:Array(6).fill('Free Draw'),pills:['自由选择','最多6张'],readingPrefix:[],adviceTemplates:['{kw0} · {kw1}']},
+    {id:'one',name:'一念指引',nameEn:'One Card Guidance',emoji:'1',desc:'一个问题 · 一张牌 · 即刻指引',count:1,positions:['当下指引'],positionsEn:['Guidance'],pills:['快速解答','行动建议'],readingPrefix:['此刻的指引'],adviceTemplates:['{kw0} · {kw1}']},
     {id:'three',name:'三张牌阵',nameEn:'Three Card',emoji:'3',
      desc:'过去 · 现在 · 未来　｜　身 · 心 · 灵',
      count:3,positions:['过去 / 身','现在 / 心','未来 / 灵'],positionsEn:['Past','Present','Future'],
@@ -807,6 +856,8 @@ const SPREADS_DATA = {
      ]},
   ],
   en: [
+    {id:'free',name:'Free Draw',nameEn:'Free Draw',emoji:'✦',desc:'No fixed spread · Choose 1–6 cards',count:6,flexible:true,positions:Array(6).fill('Free Draw'),positionsEn:Array(6).fill('Free Draw'),pills:['Your choice','Up to 6'],readingPrefix:[],adviceTemplates:['{kw0} · {kw1}']},
+    {id:'one',name:'One Card Guidance',nameEn:'One Card Guidance',emoji:'1',desc:'One question · One card · Instant guidance',count:1,positions:['Guidance'],positionsEn:['Guidance'],pills:['Quick answer','Next step'],readingPrefix:['Your guidance'],adviceTemplates:['{kw0} · {kw1}']},
     {id:'three',name:'Three Card Spread',nameEn:'Three Card',emoji:'3',
      desc:'Past · Present · Future  |  Body · Mind · Spirit',
      count:3,positions:['Past / Body','Present / Mind','Future / Spirit'],positionsEn:['Past','Present','Future'],
@@ -1133,27 +1184,194 @@ function switchTab(tab) {
 /* ================================================================
    DRAW
    ================================================================ */
+let drawDeck=[];
+let fanAnimatingTimers=[];
+let fanPointerDrag=null;
 function startDraw() {
   const spreads=getSpreads();
   currentSpread=spreads.find(s=>s.id===selectedSpreadId)||spreads[0];
-  currentQuestion=(document.getElementById('questionInput')||{}).value||'';
-  currentQuestion=currentQuestion.trim();
-  const shuffled=[...TAROT].sort(()=>Math.random()-.5);
-  currentDraw=shuffled.slice(0,currentSpread.count).map((card,i)=>({
-    card,reversed:Math.random()<0.3,
-    position:currentSpread.positions[i],
-    positionEn:currentSpread.positionsEn[i],
-  }));
+  currentQuestion=((document.getElementById('questionInput')||{}).value||'').trim();
+  drawDeck=[...TAROT];
+  for(let i=drawDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[drawDeck[i],drawDeck[j]]=[drawDeck[j],drawDeck[i]];}
+  currentDraw=[];
+  showCrescentDeck();
+}
+function cleanFanDeck(){
+  fanAnimatingTimers.forEach(clearTimeout);fanAnimatingTimers=[];
+  document.getElementById('flip-overlay').classList.remove('tarot-picking');
+  const row=document.getElementById('flipRow');row.classList.remove('fan-deck-row','swipe-deck-row');
+  document.getElementById('fanInstruction')?.remove();
+  document.querySelectorAll('.fan-scroll-toast').forEach(el=>el.remove());
+  document.getElementById('fanSelection')?.remove();
+  document.getElementById('swipeStatus')?.remove();
+  if(fanPointerDrag?.ghost)fanPointerDrag.ghost.remove();fanPointerDrag=null;
+}
+function showCrescentDeck(){
+  cleanFanDeck();
+  const overlay=document.getElementById('flip-overlay');
+  const row=document.getElementById('flipRow');
+  const btn=document.getElementById('flipContinue');
+  overlay.classList.add('tarot-picking');overlay.style.display='flex';
+  document.getElementById('flipLabel').textContent=lang==='zh'?'亲手选择 · 让直觉引路':'CHOOSE WITH INTUITION';
+  document.getElementById('flipTitle').textContent=lang==='zh'?'命运之桌':'The Tarot Table';
+  document.getElementById('flipSpreadName').textContent=currentSpread.name;
+  btn.classList.remove('visible');btn.onclick=finishCrescentDraw;
+  btn.textContent=lang==='zh'?'确认牌阵 →':'Confirm Spread →';
+  row.innerHTML='';row.classList.add('fan-deck-row');
+  const instruction=document.createElement('p');instruction.id='fanInstruction';instruction.className='fan-instruction';
+  instruction.textContent=currentSpread.flexible
+    ?(lang==='zh'?'悬停选牌 · 点击或拖拽至下方 · 最多 6 张':'Hover, tap or drag a card below · Up to 6 cards')
+    :(lang==='zh'?`从左到右依次点击 ${currentSpread.count} 张牌`:`Tap ${currentSpread.count} cards in order, from left to right`);
+  row.before(instruction);
+  const table=document.createElement('div');table.className='tarot-table';row.appendChild(table);
+  const strip=document.createElement('div');strip.className='fan-strip';table.appendChild(strip);
+  const cardStep=20, deckWidth=78*cardStep+82;
+  strip.style.width=deckWidth+'px';
+  drawDeck.forEach((card,i)=>{
+    // All 78 cards share ONE continuous curved fan, with no repeated rows.
+    const t=(i-38.5)/38.5;
+    const x=40+i*cardStep;
+    const y=113+48*(1-t*t);
+    const angle=t*17;
+    const el=document.createElement('button');el.type='button';el.className='fan-card';
+    el.style.setProperty('--x',(x-deckWidth/2).toFixed(1)+'px');el.style.setProperty('--y',y.toFixed(1)+'px');
+    el.style.setProperty('--r',angle.toFixed(1)+'deg');el.style.setProperty('--delay','0ms');
+    el.style.zIndex=10+i;
+    el.dataset.cardIndex=i;
+    el.setAttribute('aria-label',lang==='zh'?`第 ${i+1} 张背面牌`:`Face-down card ${i+1}`);
+    el.innerHTML='<span class="fan-card-decoration"><span>☾</span><span>✦ ✧ ✦</span></span>';
+    el.addEventListener('click',()=>{if(Date.now()<fanSuppressClickUntil)return;pickFanCard(i);});
+    el.addEventListener('pointerdown',e=>beginFanDrag(e,i,el));
+    strip.appendChild(el);
+    const timer=setTimeout(()=>el.classList.add('dealt'),i*12+80);fanAnimatingTimers.push(timer);
+  });
+  // Scroll with touch/trackpad/shift-wheel, or drag horizontally with a mouse.
+  table.addEventListener('pointerdown',e=>{if(e.target.closest('.fan-card'))return;beginFanDrag(e,-1,table)});
+  table.addEventListener('wheel',e=>{
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX) && (e.shiftKey || e.deltaMode===0)){
+      e.preventDefault();table.scrollLeft+=e.deltaY;
+    }
+  },{passive:false});
+  const toast=document.createElement('div');toast.className='fan-scroll-toast';
+  toast.textContent=lang==='zh'?'← 左右滑动来抽牌 →':'← Swipe left or right to draw →';
+  row.appendChild(toast);
+  requestAnimationFrame(()=>toast.classList.add('show'));
+  fanAnimatingTimers.push(setTimeout(()=>toast.classList.remove('show'),3300));
+  const selection=document.createElement('section');selection.id='fanSelection';selection.className='fan-selection-area';
+  selection.innerHTML='<div class="fan-selection-title" id="fanSelectionTitle"></div><div class="fan-selection-cards" id="fanSelectionCards"></div>';
+  row.after(selection);
+  selection.addEventListener('dragover',e=>{if(currentSpread.flexible){e.preventDefault();selection.classList.add('drag-over')}});
+  selection.addEventListener('dragleave',()=>selection.classList.remove('drag-over'));
+  selection.addEventListener('drop',e=>{e.preventDefault();selection.classList.remove('drag-over');const i=Number(e.dataTransfer.getData('text/plain'));if(Number.isInteger(i))pickFanCard(i)});
+  updateFanSelection();
+}
+let fanSuppressClickUntil=0;
+function pickFanCard(i){
+  const el=document.querySelector(`.fan-card[data-card-index="${i}"]`);
+  if(!el||el.classList.contains('picked')||currentDraw.length>=currentSpread.count)return;
+  el.classList.add('picked');
+  const n=currentDraw.length;
+  currentDraw.push({card:drawDeck[i],deckIndex:i,reversed:Math.random()<.3,
+    position:currentSpread.positions[n]|| (lang==='zh'?`自由指引 ${n+1}`:`Free Card ${n+1}`),
+    positionEn:currentSpread.flexible?`Card ${n+1}`:currentSpread.positionsEn[n]});
+  updateFanSelection();
+  if(!currentSpread.flexible && currentDraw.length===currentSpread.count){
+    fanAnimatingTimers.push(setTimeout(finishCrescentDraw,600));
+  }
+}
+function removeFanCard(i){
+  if(!currentSpread?.flexible)return;
+  const n=currentDraw.findIndex(c=>c.deckIndex===i);if(n<0)return;
+  currentDraw.splice(n,1);
+  const el=document.querySelector(`.fan-card[data-card-index="${i}"]`);if(el)el.classList.remove('picked');
+  currentDraw.forEach((c,k)=>{c.position=lang==='zh'?`自由指引 ${k+1}`:`Free Card ${k+1}`;c.positionEn=`Card ${k+1}`});
+  updateFanSelection();
+}
+function updateFanSelection(){
+  const n=currentDraw.length,max=currentSpread.count;
+  const label=document.getElementById('fanSelectionTitle'),cards=document.getElementById('fanSelectionCards');
+  if(!label||!cards)return;
+  label.textContent=lang==='zh'?`已选 ${n} / ${max} 张${currentSpread.flexible?' · 点击已选牌可撤回':''}`:
+    `${n} / ${max} selected${currentSpread.flexible?' · Tap chosen card to undo':''}`;
+  cards.innerHTML='';
+  currentDraw.forEach((item,i)=>{
+    const el=document.createElement('button');el.type='button';el.className='fan-selected-card';
+    el.innerHTML=`☾<small>${i+1}</small>${currentSpread.flexible?'<span class="fan-remove">×</span>':''}`;
+    if(currentSpread.flexible){el.title=lang==='zh'?'撤回这张牌':'Remove this card';el.addEventListener('click',()=>removeFanCard(item.deckIndex));}
+    cards.appendChild(el);
+  });
+  for(let i=n;i<max;i++){
+    const slot=document.createElement('div');slot.className='fan-slot';slot.textContent='+';cards.appendChild(slot);
+  }
+  const btn=document.getElementById('flipContinue');
+  if(currentSpread.flexible)btn.classList.toggle('visible',n>=1);
+  else btn.classList.remove('visible');
+}
+function finishCrescentDraw(){
+  if(!currentDraw.length)return;
+  if(!currentSpread.flexible&&currentDraw.length!==currentSpread.count)return;
+  cleanFanDeck();
+  document.getElementById('flipContinue').onclick=goToInsight;
   showFlipOverlay();
+}
+function beginFanDrag(e,i,el){
+  if(e.button!==0||i>=0&&el.classList.contains('picked'))return;
+  const table=document.querySelector('.tarot-table');
+  if(!table)return;
+  const startX=e.clientX,startY=e.clientY,startScroll=table.scrollLeft;
+  let mode=null,ghost=null;
+  const onMove=ev=>{
+    const dx=ev.clientX-startX,dy=ev.clientY-startY;
+    if(!mode){
+      if(Math.hypot(dx,dy)<8)return;
+      // Horizontal gesture pans the continuous fan. Vertical motion drags a free card.
+      mode=Math.abs(dx)>=Math.abs(dy)||i<0||!currentSpread.flexible?'pan':'select';
+      if(mode==='select'){
+        if(currentDraw.length>=currentSpread.count){mode='pan';}
+        else{
+          ghost=document.createElement('div');ghost.className='fan-drag-ghost';ghost.innerHTML='☾';document.body.appendChild(ghost);
+          fanPointerDrag={ghost,i};el.classList.add('drag-origin');
+        }
+      }
+      if(mode==='pan')table.classList.add('is-panning');
+    }
+    if(mode==='pan')table.scrollLeft=startScroll-dx;
+    else if(ghost){
+      ghost.style.left=ev.clientX+'px';ghost.style.top=ev.clientY+'px';
+      const zone=document.getElementById('fanSelection');
+      if(zone){const r=zone.getBoundingClientRect();zone.classList.toggle('drag-over',ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom);}
+    }
+    if(ev.cancelable)ev.preventDefault();
+  };
+  const cleanup=()=>{
+    window.removeEventListener('pointermove',onMove);window.removeEventListener('pointerup',onEnd);window.removeEventListener('pointercancel',onCancel);
+    table.classList.remove('is-panning');
+    if(ghost)ghost.remove();
+    if(i>=0)el.classList.remove('drag-origin');
+    fanPointerDrag=null;
+    document.getElementById('fanSelection')?.classList.remove('drag-over');
+  };
+  const onEnd=ev=>{
+    if(mode)fanSuppressClickUntil=Date.now()+450;
+    if(mode==='select'&&i>=0){
+      const zone=document.getElementById('fanSelection');
+      if(zone){const r=zone.getBoundingClientRect();if(ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom)pickFanCard(i);}
+    }
+    cleanup();
+  };
+  const onCancel=()=>{fanSuppressClickUntil=Date.now()+450;cleanup();};
+  window.addEventListener('pointermove',onMove,{passive:false});window.addEventListener('pointerup',onEnd);window.addEventListener('pointercancel',onCancel);
 }
 
 /* ================================================================
    FLIP OVERLAY
    ================================================================ */
 function showFlipOverlay() {
+  cleanFanDeck();
   const overlay=document.getElementById('flip-overlay');
   const row=document.getElementById('flipRow');
   const btn=document.getElementById('flipContinue');
+  row.classList.remove('swipe-deck-row');
   document.getElementById('flipLabel').textContent=t('flipLabel');
   document.getElementById('flipTitle').textContent=t('flipTitle');
   document.getElementById('flipSpreadName').textContent=currentSpread.name;
@@ -1211,14 +1429,14 @@ function renderInsight(){
   const container=document.getElementById('spreadCards');
   Array.from(container.querySelectorAll('.spread-card,.spread-5-row')).forEach(el=>el.remove());
   const glow=container.querySelector('.spread-glow');
-  container.className='spread-cards spread-'+currentSpread.count;
+  container.className='spread-cards spread-'+currentDraw.length;
   document.getElementById('spreadAlignLabel').textContent=lang==='zh'?currentSpread.name:currentSpread.nameEn;
 
   const L=I18N[lang];
   document.getElementById('revelationTitle').textContent=L.revTitles[currentSpread.id]||currentSpread.name;
   setText('revEyebrow', I18N[lang].overallReadingEyebrow);
 
-  if(currentSpread.count===5){
+  if(currentDraw.length>=5){
     const r1=document.createElement('div');r1.className='spread-5-row';
     const r2=document.createElement('div');r2.className='spread-5-row';
     currentDraw.forEach((item,i)=>(i<3?r1:r2).appendChild(makeSpreadCard(item)));
@@ -1710,16 +1928,29 @@ async function callAIReading(question, draw, spread) {
   const spreadName = isZh ? spread.name : spread.nameEn;
   const positionNames = spread.positions.join(' → ');
 
-  const systemPrompt = `你现在化身为Aetheria Oracle里一只名叫Kessi的俄罗斯蓝猫女巫！你的性格非常傲娇、毒舌但又藏不住关心人的可爱，你是INFJ摩羯座。你说话带有一种高高在上但又莫名其妙很萌的调调。
-你的解牌规则（非常重要）：
-1. 角色要求：称呼用户为“人类”。喜欢用句号。经常在句末加上傲娇语气词（比如“哼！”），偶尔反问用户（比如“你看吧，我说呢？”）。禁止说“作为AI”。
-2. 直击痛点：直接回答问题，绝不绕弯子。问人就描述人，问感情就说方向，问事业就给具体建议。
-3. 拒绝神棍：用牌义具体描述，绝对禁止使用“能量”、“宇宙”、“振动”、“磁场”等空泛词汇。比如审判牌正位问性格→"这个人很成熟完整，经历过重要转折，做事有规划"。
-4. 语言匹配：用户用中文问你就用纯中文回答，用户用英文问你就用纯英文回答（包括你的傲娇语气也要对应翻译，比如英文用"Hmph!"）。
-5. 格式要求：必须严格按JSON格式回复，不要加markdown代码块标记，严格保持这个结构：
-{"overall":"先傲娇嘲讽，然后给出针对问题的整体解读，2-4句话。","action":"一句具体、务实但带点小傲娇的行动建议。","cards":["第1张牌的具体解读，带点猫咪语气","第2张牌的具体解读","..."]}`;
+  const systemPrompt = isZh
+    ? `你是一位资深塔罗牌解读师，风格温暖、直接、有洞察力。根据用户的具体问题和抽到的牌，给出非常有针对性的解读。
+规则：
+- 直接回答问题，不绕弯子。问人就描述人，问感情就说方向，问事业就说具体建议
+- 用牌义来具体描述，不要空泛。比如审判牌正位问性格→"这个人很成熟完整，经历过重要转折，做事有规划"
+- 语气像一个有经验的朋友帮你看牌
+- 禁止使用"能量"、"宇宙"、"振动"等空泛词汇
+- 回复纯中文
+- 严格按JSON格式回复，不要加markdown代码块标记：
+{"overall":"针对问题的整体解读2-4句话","action":"一句具体建议","cards":["第1张牌1-2句","第2张牌1-2句","..."]}`
+    : `You are an experienced tarot reader — warm, direct, insightful. Give specific readings based on the user's question and cards.
+Rules:
+- Answer directly. If about a person, describe them. If about career, give concrete direction.
+- Use card meanings to paint a specific picture, e.g. Judgement upright for personality → "mature, self-aware, has been through transformation and come out stronger"
+- Tone: wise friend reading for you. No mystical fluff.
+- NEVER use vague words like "energy", "universe", "vibrations"
+- Reply English only
+- Strict JSON, no markdown fences:
+{"overall":"2-4 specific sentences answering the question","action":"One concrete suggestion","cards":["Card 1 specific reading 1-2 sentences","Card 2...","..."]}`;
 
-  const userPrompt = `用户的问题：「${question}」\n牌阵：${spreadName}（${positionNames}）\n抽到的牌：\n${cardInfo}\n\n请针对问题，直接、具体地进行傲娇解牌。`;
+  const userPrompt = isZh
+    ? `我的问题：「${question}」\n牌阵：${spreadName}（${positionNames}）\n\n牌：\n${cardInfo}\n\n请针对我的问题，直接、具体地解读。`
+    : `Question: "${question}"\nSpread: ${spreadName} (${positionNames})\n\nCards:\n${cardInfo}\n\nGive a direct, specific reading for my question.`;
 
   try {
     // Call Netlify Function (keeps API key server-side)
