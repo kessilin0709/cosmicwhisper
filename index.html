@@ -655,6 +655,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
   <button class="flip-continue" id="flipContinue" onclick="goToInsight()" id="flipContinueBtn">查看洞见 →</button>
 </div>
 
+<script src="cat-persona.js"></script>
 <script>
 /* ================================================================
    LANGUAGE SYSTEM
@@ -665,18 +666,11 @@ const I18N = {
   zh: {
     headerTitle: 'Aetheria Oracle',
     langBtn: 'EN',
-    oracleMessages: [
-      '"群星已对齐，抽出你的命运。"',
-      '"宇宙低语着你的名字，我们是否倾听？"',
-      '"虚空中的牌阵等待着你。"',
-      '"你的命运在表面之下涌动。"',
-      '"宇宙今天有话对你说。"',
-      '"闭上眼睛，让阿尔卡那开口。"',
-    ],
+    oracleMessages: window.CAT_PERSONA["zh"].oracleMessages,
     spreadSelectorTitle: '— 选择你的牌阵 —',
     deckLabel: '神秘牌组',
     drawActionText: '抽取你的牌 ✦',
-    insightQuote: '"这是宇宙的真相。星辰排列，揭示隐藏在你灵魂阴影中的一切。"',
+    insightQuote: window.CAT_PERSONA["zh"].insightQuote,
     spreadTitle: '你的牌阵',
     currentAlignment: '当前排列',
     revEyebrow: '天启',
@@ -715,18 +709,11 @@ const I18N = {
   en: {
     headerTitle: 'Aetheria Oracle',
     langBtn: '中文',
-    oracleMessages: [
-      '"The stars are aligned. Draw your fate."',
-      '"The cosmos whispers your name. Shall we listen?"',
-      '"The cards await in the void. Choose your spread."',
-      '"Your destiny stirs beneath the surface."',
-      '"The universe has a message for you today."',
-      '"Close your eyes. Let the arcana speak."',
-    ],
+    oracleMessages: window.CAT_PERSONA["en"].oracleMessages,
     spreadSelectorTitle: '— Choose Your Spread —',
     deckLabel: 'Arcana Deck',
     drawActionText: 'Draw Your Cards ✦',
-    insightQuote: '"Here is the truth of the universe. The stars align to reveal what is hidden in the shadows of your soul."',
+    insightQuote: window.CAT_PERSONA["en"].insightQuote,
     spreadTitle: 'Your Spread',
     currentAlignment: 'Current Alignment',
     revEyebrow: 'The Revelation',
@@ -1943,25 +1930,7 @@ async function callAIReading(question, draw, spread) {
   const spreadName = isZh ? spread.name : spread.nameEn;
   const positionNames = spread.positions.join(' → ');
 
-  const systemPrompt = isZh
-    ? `你是一位资深塔罗牌解读师，风格温暖、直接、有洞察力。根据用户的具体问题和抽到的牌，给出非常有针对性的解读。
-规则：
-- 直接回答问题，不绕弯子。问人就描述人，问感情就说方向，问事业就说具体建议
-- 用牌义来具体描述，不要空泛。比如审判牌正位问性格→"这个人很成熟完整，经历过重要转折，做事有规划"
-- 语气像一个有经验的朋友帮你看牌
-- 禁止使用"能量"、"宇宙"、"振动"等空泛词汇
-- 回复纯中文
-- 严格按JSON格式回复，不要加markdown代码块标记：
-{"overall":"针对问题的整体解读2-4句话","action":"一句具体建议","cards":["第1张牌1-2句","第2张牌1-2句","..."]}`
-    : `You are an experienced tarot reader — warm, direct, insightful. Give specific readings based on the user's question and cards.
-Rules:
-- Answer directly. If about a person, describe them. If about career, give concrete direction.
-- Use card meanings to paint a specific picture, e.g. Judgement upright for personality → "mature, self-aware, has been through transformation and come out stronger"
-- Tone: wise friend reading for you. No mystical fluff.
-- NEVER use vague words like "energy", "universe", "vibrations"
-- Reply English only
-- Strict JSON, no markdown fences:
-{"overall":"2-4 specific sentences answering the question","action":"One concrete suggestion","cards":["Card 1 specific reading 1-2 sentences","Card 2...","..."]}`;
+  const systemPrompt = window.CAT_PERSONA[isZh ? "zh" : "en"].systemPrompt;
 
   const userPrompt = isZh
     ? `我的问题：「${question}」\n牌阵：${spreadName}（${positionNames}）\n\n牌：\n${cardInfo}\n\n请针对我的问题，直接、具体地解读。`
