@@ -190,6 +190,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 #flip-overlay.tarot-picking #flipContinue{margin-top:3px;flex-shrink:0}
 @media(max-height:730px){#flip-overlay.tarot-picking{padding-top:12px}.tarot-table{height:230px}.fan-strip{height:225px}.fan-selection-area{min-height:106px}.fan-selection-cards{min-height:66px}}
 
+
+/* Deck positions 01–78 */
+.fan-card-number{position:absolute;left:3px;top:4px;z-index:4;min-width:18px;padding:2px 1px;background:rgba(10,9,24,.94);border:1px solid rgba(255,190,227,.55);border-radius:3px;color:#ffe3f3;font:700 9px/1.15 var(--sans);text-align:center;pointer-events:none}
+.fan-card.dealt:hover .fan-card-number,.fan-card.dealt:focus-visible .fan-card-number{background:#ff2dab;color:#240a21;font-size:13px;min-width:26px}
+.fan-current-number{text-align:center;min-height:22px;font-size:12px;line-height:22px;color:#f7b8e3}
+.fan-current-number strong{font-size:15px;color:#ff58c0;font-variant-numeric:tabular-nums}
+.fan-selected-deck-number{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;color:#ffe3f3}
+.fan-selected-order{position:absolute;bottom:4px;font-size:8px;color:#eab0d3}
+
 /* User-controlled swipe-to-draw deck */
 .swipe-deck-row{width:100%;max-width:100%;display:block;overflow:hidden;flex-wrap:nowrap}
 .swipe-track{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;padding:14px 24px 24px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;touch-action:pan-x}
@@ -1201,6 +1210,7 @@ function cleanFanDeck(){
   document.getElementById('flip-overlay').classList.remove('tarot-picking');
   const row=document.getElementById('flipRow');row.classList.remove('fan-deck-row','swipe-deck-row');
   document.getElementById('fanInstruction')?.remove();
+  document.getElementById('fanCurrentNumber')?.remove();
   document.querySelectorAll('.fan-scroll-toast').forEach(el=>el.remove());
   document.getElementById('fanSelection')?.remove();
   document.getElementById('swipeStatus')?.remove();
@@ -1223,6 +1233,7 @@ function showCrescentDeck(){
     ?(lang==='zh'?'悬停选牌 · 点击或拖拽至下方 · 最多 6 张':'Hover, tap or drag a card below · Up to 6 cards')
     :(lang==='zh'?`从左到右依次点击 ${currentSpread.count} 张牌`:`Tap ${currentSpread.count} cards in order, from left to right`);
   row.before(instruction);
+  const indicator=document.createElement('div');indicator.id='fanCurrentNumber';indicator.className='fan-current-number';indicator.textContent=lang==='zh'?'悬停查看牌号 · 共 78 张':'Hover to see card number · 78 cards';instruction.after(indicator);
   const table=document.createElement('div');table.className='tarot-table';row.appendChild(table);
   const strip=document.createElement('div');strip.className='fan-strip';table.appendChild(strip);
   const cardStep=20, deckWidth=78*cardStep+82;
@@ -1239,7 +1250,10 @@ function showCrescentDeck(){
     el.style.zIndex=10+i;
     el.dataset.cardIndex=i;
     el.setAttribute('aria-label',lang==='zh'?`第 ${i+1} 张背面牌`:`Face-down card ${i+1}`);
-    el.innerHTML='<span class="fan-card-decoration"><span>☾</span><span>✦ ✧ ✦</span></span>';
+    el.innerHTML=`<span class="fan-card-decoration"><span>☾</span><span>✦ ✧ ✦</span></span><span class="fan-card-number" aria-hidden="true">${String(i+1).padStart(2,'0')}</span>`;
+    el.title=lang==='zh'?`第 ${i+1} / 78 张牌`:`Card ${i+1} of 78`;
+    el.addEventListener('pointerenter',()=>showFanCardNumber(i));
+    el.addEventListener('focus',()=>showFanCardNumber(i));
     el.addEventListener('click',()=>{if(Date.now()<fanSuppressClickUntil)return;pickFanCard(i);});
     el.addEventListener('pointerdown',e=>beginFanDrag(e,i,el));
     strip.appendChild(el);
@@ -1265,6 +1279,7 @@ function showCrescentDeck(){
   selection.addEventListener('drop',e=>{e.preventDefault();selection.classList.remove('drag-over');const i=Number(e.dataTransfer.getData('text/plain'));if(Number.isInteger(i))pickFanCard(i)});
   updateFanSelection();
 }
+function showFanCardNumber(i){const label=document.getElementById('fanCurrentNumber');if(!label)return;const n=String(i+1).padStart(2,'0');label.innerHTML=lang==='zh'?`当前指向 <strong>${n}</strong> / 78 张`:`Card <strong>${n}</strong> / 78`;}
 let fanSuppressClickUntil=0;
 function pickFanCard(i){
   const el=document.querySelector(`.fan-card[data-card-index="${i}"]`);
@@ -1296,7 +1311,7 @@ function updateFanSelection(){
   cards.innerHTML='';
   currentDraw.forEach((item,i)=>{
     const el=document.createElement('button');el.type='button';el.className='fan-selected-card';
-    el.innerHTML=`☾<small>${i+1}</small>${currentSpread.flexible?'<span class="fan-remove">×</span>':''}`;
+    el.innerHTML=`☾<span class="fan-selected-deck-number">#${String(item.deckIndex+1).padStart(2,'0')}</span><span class="fan-selected-order">${i+1}</span>${currentSpread.flexible?'<span class="fan-remove">×</span>':''}`;
     if(currentSpread.flexible){el.title=lang==='zh'?'撤回这张牌':'Remove this card';el.addEventListener('click',()=>removeFanCard(item.deckIndex));}
     cards.appendChild(el);
   });
